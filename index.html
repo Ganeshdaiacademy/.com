@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +73,22 @@
             { id: 'science', name: 'Science', compulsory: ['English', 'Nepali', 'Physics', 'Chemistry', 'Mathematics'], optional: [['Biology', 'Computer Science']], optional_count: 1 },
             { id: 'management', name: 'Management', compulsory: ['English', 'Nepali', 'Accountancy', 'Economics'], optional: [['Business Studies', 'Business Mathematics', 'Computer Science', 'Social']], optional_count: 2 }
         ],
+        digitalLibrary: [
+    {
+      id: 2001,
+      title: 'NEB Grade 11 — All Subject Notes (All-in-one)',
+      link: 'https://drive.google.com/file/d/1Twsmqo8m0HILemG2jub78Vk_DngB40bn/view?usp=drive_link',
+      description: 'Complete PDF notes for Grade 11 — all subjects.',
+      isPremium: false
+    },
+    {
+      id: 2002,
+      title: 'Physics – NEB Solutions & Model Papers',
+      link: 'https://drive.google.com/file/d/1LPE32JyGu0n20MJheD1lq0o-6qLtokjK/view?usp=drive_link',
+      description: 'Past-year solutions and model question sets.',
+      isPremium: false
+    },
+  ],
         subjectData: {
             'English': { credits: 4 }, 'Nepali': { credits: 3 }, 'Mathematics': { credits: 5 }, 'Physics': { credits: 5 }, 'Chemistry': { credits: 5 }, 'Biology': { credits: 5 }, 'Computer Science': { credits: 5 }, 'Accountancy': { credits: 5 }, 'Economics': { credits: 5 }, 'Business Studies': { credits: 5 }, 'Business Mathematics': { credits: 5 }, 'Social': { credits: 5 },
         },
@@ -212,7 +229,47 @@
             { question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo" },
             { question: "What has an eye, but cannot see?", answer: "needle" },
             { question: "What is full of holes but still holds water?", answer: "sponge" }
-        ]
+        ],
+        digitalLibrary: [
+  {
+    id: 2001,
+    title: 'NEB Grade 11 — All Subject Model Question (All-in-one)',
+    link: 'https://drive.google.com/file/d/1Twsmqo8m0HILemG2jub78Vk_DngB40bn/view?usp=drive_link',
+    description: 'Complete PDF notes for Grade 11 — all subjects.',
+    isPremium: false
+  },
+  {
+    id: 2002,
+    title: 'Physics – NEB Solutions & Model Papers',
+    link: 'https://drive.google.com/file/d/1LPE32JyGu0n20MJheD1lq0o-6qLtokjK/view?usp=drive_link',
+    description: 'Past-year solutions and model question sets.',
+    isPremium: false
+  },
+  {
+    id: 2003,
+    title: 'Chemistry Grade 12 – Model Question Papers',
+    link: 'https://drive.google.com/file/d/1Yh8dUuZJXy9abc123456789/view?usp=sharing',
+    description: 'All NEB chemistry model question papers in one PDF.',
+    isPremium: false
+  },
+   { id: 2004, 
+   title: 'All Past Year Model Question Saint Xavier', 
+   link: 'https://drive.google.com/file/d/10m-T2hfjyQ-7AWTlDeTY-TrS9cYlL8DQ/view?usp=drive_link', 
+    description: 'All NEB chemistry model question papers in one PDF.',
+   isPremium: false },
+   
+  { id: 2005, 
+  title: 'OLD is GOLD Question Bank', 
+  link: 'https://drive.google.com/file/d/1H92WYzcYca456OIgi-xx78sdwAv35tsJ/view?usp=drive_link',
+   description: 'All NEB chemistry model question papers in one PDF.',
+  isPremium: false },
+  
+  { id: 2006, 
+  title: 'NEB Solution of Physic',
+  link: 'https://drive.google.com/file/d/1LPE32JyGu0n20MJheD1lq0o-6qLtokjK/view?usp=drive_link', 
+   description: 'All NEB chemistry model question papers in one PDF.',
+  isPremium: false },
+],
     };
 
     // =================================================================================
@@ -379,7 +436,68 @@
 
         return (<div className="p-4 md:p-6 animate-fadeIn"><h2 className="text-3xl font-bold font-display mb-6">Note Explorer</h2><div className="sticky top-0 z-30 bg-slate-100/80 dark:bg-slate-950/80 backdrop-blur-sm p-4 -mx-4 md:-mx-6 mb-6 rounded-b-lg"><div className="relative mb-4"><i className="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i><input type="text" placeholder="Search notes by title..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-12 pr-4 py-3 rounded-full border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-teal-500 focus:border-transparent transition" /></div><div className="flex items-center gap-4"><select value={filters.grade} onChange={e => setFilters(p => ({...p, grade: e.target.value}))} className="w-1/3 py-3 px-4 rounded-full border-2 dark:border-slate-700 bg-white dark:bg-slate-800"><option value="all">All Grades</option><option value="11">Grade 11</option><option value="12">Grade 12</option></select><select value={filters.subject} onChange={e => setFilters(p => ({...p, subject: e.target.value}))} className="w-2/3 py-3 px-4 rounded-full border-2 dark:border-slate-700 bg-white dark:bg-slate-800"><option value="all">All My Subjects</option>{streamSubjects.map(sub => <option key={sub} value={sub}>{sub}</option>)}</select></div></div><div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">{filteredNotes.map((note, i) => <div key={note.id} style={{ animationDelay: `${i * 30}ms` }} className="animate-fadeIn"><NoteCard note={note} isBookmarked={bookmarkedNotes.includes(note.id)} onBookmark={onBookmark} onView={onViewNote} isPremiumUser={isPremium} onGoPremium={onGoPremium} style={{ background: `linear-gradient(45deg, var(--tw-gradient-stops))`}} className={`bg-gradient-to-br ${cardGradients[i % cardGradients.length]}`} /></div>)}</div></div>);
     };
-    
+    // Paste this after NotesExplorer (before MyStudyList or near other sections)
+const DigitalLibrary = ({ user, isPremium, onViewNote, onGoPremium }) => {
+  const [search, setSearch] = useState('');
+  const items = DATA.digitalLibrary || [];
+  const filtered = items.filter(it =>
+    it.title.toLowerCase().includes(search.toLowerCase()) ||
+    (it.description || '').toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="p-4 md:p-6 animate-fadeIn">
+      <h2 className="text-3xl font-bold font-display mb-4">Digital Library</h2>
+
+      <div className="mb-6">
+        <input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search library..."
+          className="w-full pl-4 pr-4 py-3 rounded-full border-2 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-teal-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filtered.map(item => (
+          <div key={item.id} className="p-5 rounded-xl shadow-lg bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200">
+            <div className="flex justify-between items-start">
+              <div>
+                <h4 className="font-bold text-lg">{item.title}</h4>
+                <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.description}</p>
+              </div>
+              {item.isPremium && !isPremium && <span className="text-amber-400 text-sm font-bold">Premium</span>}
+            </div>
+
+            <div className="mt-4 flex gap-2">
+              {(!item.isPremium || isPremium) ? (
+                <button
+                  onClick={() => onViewNote && onViewNote({
+                    id: item.id,
+                    title: item.title,
+                    link: item.link,
+                  })}
+                  className="px-3 py-2 rounded-full bg-teal-500 text-white font-semibold text-sm"
+                >
+                  Open PDF
+                </button>
+              ) : (
+                <button
+                  onClick={onGoPremium}
+                  className="px-3 py-2 rounded-full border text-sm text-amber-500"
+                >
+                  Unlock
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+        {filtered.length === 0 && <p className="text-slate-500 dark:text-slate-400">No items found.</p>}
+      </div>
+    </div>
+  );
+};
+
  const MyStudyList = ({ bookmarkedNotes, allNotes, onBookmark, onViewNote, isPremium, onGoPremium, setActiveSection }) => {
         const notes = useMemo(() => allNotes.filter(n => bookmarkedNotes.includes(n.id)), [bookmarkedNotes, allNotes]);
         return (<div className="p-4 md:p-6 animate-fadeIn"><h2 className="text-3xl font-bold font-display mb-2">My Study List</h2><p className="text-slate-500 dark:text-slate-400 mb-6">Your hand-picked collection of important notes.</p>{notes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">{notes.map(note => <NoteCard key={note.id} note={note} isBookmarked={true} onBookmark={onBookmark} onView={onViewNote} isPremiumUser={isPremium} onGoPremium={onGoPremium}/>)}</div> : <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-2xl"><i className="far fa-bookmark text-6xl text-slate-400"></i><h3 className="mt-4 text-2xl font-bold">Your Study List is Empty</h3><p className="mt-2 text-slate-500">Click the bookmark icon on any note to add it here.</p><button onClick={() => setActiveSection({name: 'explorer'})} className="mt-6 gradient-button font-bold py-3 px-6 rounded-full">Explore Notes</button></div>}</div>);
@@ -507,6 +625,15 @@
                 case 'studylist': return <MyStudyList bookmarkedNotes={bookmarkedNotes} allNotes={DATA.notes} onBookmark={handleBookmark} onViewNote={handleViewNote} isPremium={isPremium} onGoPremium={() => setShowPaymentModal(true)} setActiveSection={setActiveSection}/>;
                 case 'tools': return <QuickTools user={user} />;
                 case 'examprep': return <ExamPrepSection user={user} />;
+                 case 'library':
+      return (
+        <DigitalLibrary
+          user={user}
+          isPremium={isPremium}
+          onViewNote={handleViewNote}
+          onGoPremium={() => setShowPaymentModal(true)}
+        />
+      );
                 default: return <Dashboard user={user} setActiveSection={setActiveSection} lastViewedNote={lastViewedNote} />;
             }
         };
@@ -533,6 +660,8 @@
                                <NavButton sectionName="studylist" icon="fas fa-bookmark" label="My Study List" badgeCount={bookmarkedNotes.length}/>
                                <NavButton sectionName="examprep" icon="fas fa-feather-alt" label="Exam Preps" />
                                <NavButton sectionName="tools" icon="fas fa-tools" label="Quick Tools" />
+                               <NavButton sectionName="library" icon="fas fa-book-open" label="Digital Library" />
+
                                <button onClick={() => setShowPresentationModal(true)} className="w-full flex items-center gap-3 p-3 rounded-lg font-semibold text-left nav-link"><i className="fas fa-chalkboard-teacher w-5 text-center"></i> Request Presentation</button>
                             </nav>
                         </div>
