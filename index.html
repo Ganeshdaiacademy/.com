@@ -66,7 +66,7 @@
             youtube: "https://www.youtube.com/@Grade11-12StudyHub",
             facebook: "https://www.facebook.com/ganesh.dahal.627352/",
         },
-        esewaId: "9863997295",
+        esewaId: "9826594548",
         whatsAppContactLink: "https://wa.me/9826594548?text=" + encodeURIComponent("I have paid for Ganesh Dai Academy premium. Please provide my activation code."),
         presentationRequestNumber: "9826594548",
         streams: [
@@ -220,7 +220,6 @@
               // Computer
      { id: 105, grade: 11, subject: 'Computer Science', title: 'Computer System', link: 'https://drive.google.com/file/d/10XsdgPqsIcxVk-OgkVdCgTjUwRXzad9T/view', isPremium: false },
       { id: 106, grade: 11, subject: 'Computer Science', title: 'Number System', link: 'https://drive.google.com/file/u/0/d/1NG6wBIswzHTNUs0M_o1KEETF42zzTJDO/view', isPremium: false },
-     { id: 107, grade: 11, subject: 'Computer Science', title: 'Information Security and Cyber Law', link: 'https://drive.google.com/file/d/1NO1n_Fpgm_mVYNGeVOf4dJWinI3Mnryr/view', isPremium: false },
     
         ],
         examPreps: {
@@ -501,7 +500,64 @@ const DigitalLibrary = ({ user, isPremium, onViewNote, onGoPremium }) => {
     </div>
   );
 };
+const AboutSection = ({ user }) => {
+  return (
+    <div className="p-4 md:p-6 animate-fadeIn">
+      <h2 className="text-3xl font-bold font-display mb-4">About {DATA.appName}</h2>
 
+      <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-md space-y-4">
+        <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
+          {DATA.appName} — {DATA.appSubtitle}. This learning hub bundles notes, past
+          questions, exam checklists and quick study tools for Grade 11 & 12 students.
+          Built to be small, responsive and offline-friendly.
+          
+          <div className="space-y-4">
+  <h4 className="font-semibold">Disclaimer</h4>
+  <p className="text-sm text-slate-500 leading-relaxed">
+    Most of the study materials, PDFs, and documents available on this platform are created and compiled by me. 
+    However, some files have been collected from various online sources such as educational websites, Facebook groups, 
+    and public archives — solely for educational and reference purposes. 
+    The aim is to make it easier for students to find all essential resources in one place. 
+    All rights and credits go to the respective authors and content owners. 
+    If you are a copyright holder and would like your material removed or credited differently, 
+    please contact me, and I will respond promptly.
+  </p>
+</div>
+
+        </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <h4 className="font-semibold">Founder</h4>
+            <p className="text-sm text-slate-500">Ganesh Dahal</p>
+          </div>
+          <div>
+            <h4 className="font-semibold">Version</h4>
+            <p className="text-sm text-slate-500">v1.0.0</p>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className="font-semibold">Contact & Socials</h4>
+            <p className="text-sm text-slate-500">
+              <a href={DATA.socials.facebook} target="_blank" rel="noopener noreferrer" className="underline">Facebook</a>
+              {' · '}
+              <a href={DATA.socials.youtube} target="_blank" rel="noopener noreferrer" className="underline">YouTube</a>
+            </p>
+          </div>
+
+          <div className="md:col-span-2">
+            <h4 className="font-semibold">Mission</h4>
+            <p className="text-sm text-slate-500">Provide concise, exam-focused resources and practical tools to help students succeed in +2 NEB exams.</p>
+          </div>
+        </div>
+
+        <div className="pt-2 border-t dark:border-slate-700">
+          <button onClick={() => alert('Thanks for checking the About page!')} className="mt-3 gradient-button px-4 py-2 rounded-full text-white font-bold">Say Hi</button>
+        </div>
+      </div>
+    </div>
+  );
+};
  const MyStudyList = ({ bookmarkedNotes, allNotes, onBookmark, onViewNote, isPremium, onGoPremium, setActiveSection }) => {
         const notes = useMemo(() => allNotes.filter(n => bookmarkedNotes.includes(n.id)), [bookmarkedNotes, allNotes]);
         return (<div className="p-4 md:p-6 animate-fadeIn"><h2 className="text-3xl font-bold font-display mb-2">My Study List</h2><p className="text-slate-500 dark:text-slate-400 mb-6">Your hand-picked collection of important notes.</p>{notes.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">{notes.map(note => <NoteCard key={note.id} note={note} isBookmarked={true} onBookmark={onBookmark} onView={onViewNote} isPremiumUser={isPremium} onGoPremium={onGoPremium}/>)}</div> : <div className="text-center py-20 bg-white dark:bg-slate-800/50 rounded-2xl"><i className="far fa-bookmark text-6xl text-slate-400"></i><h3 className="mt-4 text-2xl font-bold">Your Study List is Empty</h3><p className="mt-2 text-slate-500">Click the bookmark icon on any note to add it here.</p><button onClick={() => setActiveSection({name: 'explorer'})} className="mt-6 gradient-button font-bold py-3 px-6 rounded-full">Explore Notes</button></div>}</div>);
@@ -638,6 +694,9 @@ const DigitalLibrary = ({ user, isPremium, onViewNote, onGoPremium }) => {
           onGoPremium={() => setShowPaymentModal(true)}
         />
       );
+      case 'about':
+  return <AboutSection user={user} />;
+
                 default: return <Dashboard user={user} setActiveSection={setActiveSection} lastViewedNote={lastViewedNote} />;
             }
         };
@@ -665,6 +724,7 @@ const DigitalLibrary = ({ user, isPremium, onViewNote, onGoPremium }) => {
                                <NavButton sectionName="examprep" icon="fas fa-feather-alt" label="Exam Preps" />
                                <NavButton sectionName="tools" icon="fas fa-tools" label="Quick Tools" />
                                <NavButton sectionName="library" icon="fas fa-book-open" label="Digital Library" />
+                               <NavButton sectionName="about"   icon="fas fa-info-circle" label="About" />
 
                                <button onClick={() => setShowPresentationModal(true)} className="w-full flex items-center gap-3 p-3 rounded-lg font-semibold text-left nav-link"><i className="fas fa-chalkboard-teacher w-5 text-center"></i> Request Presentation</button>
                             </nav>
