@@ -32,8 +32,13 @@
             background-color: #f8fafc; 
             margin: 0;
             padding: 0;
+            color: #1e293b;
+            line-height: 1.6;
         }
-        .dark body { background-color: #0f172a; }
+        .dark body { 
+            background-color: #0f172a; 
+            color: #f1f5f9;
+        }
         h1, h2, h3, h4, h5, h6, .font-display { font-family: 'Poppins', sans-serif; }
         
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,11 +66,13 @@
             background: linear-gradient(135deg, var(--primary-500), var(--primary-600)); 
             color: white; 
             transition: all .3s ease; 
-            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+            border: none;
+            font-weight: 600;
         }
         .gradient-button:hover:not(:disabled) { 
-            transform: translateY(-2px); 
-            box-shadow: 0 8px 20px rgba(13, 148, 136, .3); 
+            transform: translateY(-3px); 
+            box-shadow: 0 12px 25px rgba(13, 148, 136, 0.4); 
         }
         
         .nav-link { transition: all .2s ease-in-out; }
@@ -98,13 +105,17 @@
             border-radius: 1rem; 
             box-shadow: 0 20px 40px rgba(0,0,0,.3); 
             text-align: center; 
-            color: #111827; 
+            color: #1e293b;
+            background: white;
             animation: popIn .4s ease-out; 
             max-width: 95%; 
             width: 500px; 
             overflow: hidden; 
         }
-        .dark .modal-box { color: #f3f4f6; }
+        .dark .modal-box { 
+            color: #f1f5f9; 
+            background: #1e293b;
+        }
         
         .pdf-viewer-modal { 
             background: #0f172a; 
@@ -134,53 +145,21 @@
             pointer-events: auto; 
         }
         
-        /* Mobile Navigation - IMPROVED */
-        .mobile-nav { 
-            position: fixed; 
-            bottom: 0; 
-            left: 0; 
-            right: 0; 
-            background: white; 
-            display: flex; 
-            justify-content: space-around; 
-            padding: 0.5rem 0; 
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1); 
-            z-index: 100; 
-            padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
-        }
-        .dark .mobile-nav { 
-            background: #0f172a; 
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.3); 
-        }
-        .mobile-nav-item { 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            padding: 0.5rem; 
-            font-size: 0.75rem; 
-            color: #64748b; 
-            transition: all 0.2s; 
-            position: relative;
-            flex: 1;
-        }
-        .mobile-nav-item.active { 
-            color: var(--primary-500); 
-        }
-        .mobile-nav-item i { 
-            font-size: 1.25rem; 
-            margin-bottom: 0.25rem; 
-        }
-        
         /* Card styles */
         .card {
             background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             overflow: hidden;
+            color: #1e293b;
+            transition: all 0.3s ease;
         }
         .dark .card {
             background: #1e293b;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #f1f5f9;
         }
         
         /* Quiz styles */
@@ -189,39 +168,73 @@
             color: white;
             font-weight: 600;
             transition: all 0.3s;
-            box-shadow: 0 4px 6px -1px rgba(13, 148, 136, 0.2);
+            box-shadow: 0 4px 15px rgba(13, 148, 136, 0.3);
+            border: none;
         }
         .btn-grad:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(13, 148, 136, 0.4);
         }
         
         /* Section styles */
         .section {
-            padding: 1rem;
+            padding: 2rem 1rem;
             max-width: 1200px;
             margin: 0 auto;
         }
         @media (min-width: 768px) {
             .section {
-                padding: 1.5rem;
+                padding: 2.5rem 1.5rem;
             }
         }
         
-        /* Hide desktop sidebar on mobile */
+        /* Mobile sidebar */
         @media (max-width: 767px) {
             .desktop-sidebar {
-                display: none;
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                width: 280px;
+                z-index: 1000;
+                transition: left 0.3s ease;
+                overflow-y: auto;
+                box-shadow: 2px 0 10px rgba(0,0,0,0.1);
             }
-            .mobile-nav {
-                display: flex;
+            
+            .desktop-sidebar.mobile-open {
+                left: 0;
             }
+            
+            .mobile-menu-toggle {
+                display: block;
+                position: fixed;
+                top: 1rem;
+                left: 1rem;
+                z-index: 1001;
+                background: var(--primary-500);
+                color: white;
+                border: none;
+                border-radius: 50%;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            }
+            
             main {
-                padding-bottom: 5rem;
+                padding-top: 1rem;
+            }
+            
+            .overlay-mobile {
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                z-index: 999;
             }
         }
         @media (min-width: 768px) {
-            .mobile-nav {
+            .mobile-menu-toggle {
                 display: none;
             }
         }
@@ -377,8 +390,8 @@
             transition: all 0.3s ease;
         }
         .card-hover:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         
         /* Glassmorphism effect */
@@ -386,6 +399,21 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        /* Better text sizing for mobile */
+        @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+            }
+            
+            .section {
+                padding: 1.5rem 1rem;
+            }
+            
+            h1, h2, h3 {
+                line-height: 1.3;
+            }
         }
     </style>
 </head>
@@ -631,7 +659,6 @@
         
         notes: {
             '11': [
-                // Physics grade 11
                 { id: 1, grade: 11, subject: 'Physics', title: 'Chapter 1: Unit and Dimension', link: 'https://drive.google.com/file/d/178ortL2-MP8zK9pOaSX-0KTKFUz5OhUI/view?usp=sharing', isPremium: false },
                 { id: 2, grade: 11, subject: 'Physics', title: 'Chapter 2: Vectors', link: 'https://drive.google.com/file/d/19q88Gi6sk4TXrwkP-Pmql4KDDX0sPd3u/view', isPremium: false },
                 { id: 3, grade: 11, subject: 'Physics', title: 'Chapter 3: Kinematics', link: 'https://drive.google.com/file/d/1A3z-ZPzLIOdy7e6eC5TX35KGyfvOqzZh/view', isPremium: false },
@@ -646,16 +673,10 @@
                 { id: 22, grade: 11, subject: 'Physics', title: 'Chapter 22: Capacitor and Capacitance', link: 'https://drive.google.com/file/d/1GjUkgrsmyRv3RJbvHUqmXiRIkHceIDa7/view?usp=drive_link', isPremium: false },
                 { id: 24, grade: 11, subject: 'Physics', title: 'Chapter 24: Nuclear Physics', link: 'https://drive.google.com/file/d/1vGHhytFU97B9XpIn2aWaerZqWzfhWKdg/view?usp=drive_link', isPremium: false },
                 { id: 25, grade: 11, subject: 'Physics', title: 'Chapter 25: Solid', link: 'https://drive.google.com/file/d/1tnyzm4N_YsVUd6uW1--oaHZMsNP12ITb/view?usp=drive_link', isPremium: false },
-
-                // Mathematics grade 11
                 { id: 1001, grade: 11, subject: 'Mathematics', title: 'All Required Formula', link: 'https://drive.google.com/file/d/1LmRl2CNWPIUAfoyR1hch84UkHhG5r3NT/view', isPremium: false },
                 { id: 1002, grade: 11, subject: 'Mathematics', title: 'Application of Derivatives', link: 'https://drive.google.com/file/d/1pQtaBDd0RBLf1Et4d_S6KIHPkOwVtPwA/view', isPremium: false },
                 { id: 1003, grade: 11, subject: 'Mathematics', title: 'Antiderivatives', link: 'https://drive.google.com/file/d/1q-NpT-ueLZvjHZHjlGLRL1A3X_MHYXrV/view', isPremium: false },
-
-                // Biology grade 11
                 { id: 2001, grade: 11, subject: 'Biology', title: 'Cell Biology', link: 'https://drive.google.com/file/d/14Ohb60T-q3sI5XXbXTiz43hY-UxWb80n/view', isPremium: false },
-
-                // Chemistry grade 11
                 { id: 27, grade: 11, subject: 'Chemistry', title: 'Chapter 1: Foundation and Fundamentals', link: 'https://drive.google.com/file/d/1AuHGWyxBDjBtH4rGMH7JaBaVvgREOKJR/view?usp=sharing', isPremium: false },
                 { id: 28, grade: 11, subject: 'Chemistry', title: 'Chapter 2: Stoichiometry', link: 'https://drive.google.com/file/d/1AnNzZ_KejeWSbBTATk9gNc_6zz0uwByP/view?usp=sharing', isPremium: false },
                 { id: 29, grade: 11, subject: 'Chemistry', title: 'Redox Reaction', link: 'https://drive.google.com/file/d/1LaSQwV4abLBa0PewrikGWCp5geRm9vwF/view?usp=drive_link', isPremium: false },
@@ -663,8 +684,6 @@
                 { id: 39, grade: 11, subject: 'Chemistry', title: 'Hydrocarbon', link: 'https://drive.google.com/file/d/1isy9p4pW1RGnakYSTV7m7eTV1lW6pqAR/view?usp=drive_link', isPremium: false },
                 { id: 40, grade: 11, subject: 'Chemistry', title: 'Chapter 14: Hydrocarbons', link: 'https://drive.google.com/file/d/1isy9p4pW1RGnakYSTV7m7eTV1lW6pqAR/view?usp=drive_link', isPremium: false },
                 { id: 43, grade: 11, subject: 'Chemistry', title: 'Mole Concept', link: 'https://drive.google.com/file/d/1jxCaNO8ztUR_tXseI_SUvJPzRK4enfOu/view?usp=drive_link', isPremium: false },
-
-                // Nepali grade 11
                 { id: 56, grade: 11, subject: 'Nepali', title: 'Chapter 1: वीर पुर्खा (कविता)', link: 'https://drive.google.com/file/d/14o1jiIKU6CxSQw7pAu_ofmASW9j3ET62/view?usp=sharing', isPremium: false },
                 { id: 57, grade: 11, subject: 'Nepali', title: 'Chapter 2: गाउँको माया (सामाजिक कथा)', link: 'https://drive.google.com/file/d/1QXJGVAPRw_Sn3x7XTcXZSz-F2gJwm_GH/view?usp=drive_link', isPremium: false },
                 { id: 58, grade: 11, subject: 'Nepali', title: 'Chapter 3: संस्कृतिको नयाँ यात्रा (आत्मपरक निबन्ध)', link: 'https://drive.google.com/file/d/1xtfOah6kXFZJZ1kttcYJB0EPIc_pmJre/view?usp=drive_link', isPremium: false },
@@ -677,8 +696,6 @@
                 { id: 65, grade: 11, subject: 'Nepali', title: 'Chapter 10: कृषिशालामा एक दिन (संवाद)', link: 'https://drive.google.com/file/d/1KIAkEeir7EvLs_5m3gmGbWv3bycrWQyL/view?usp=drive_link', isPremium: false },
                 { id: 66, grade: 11, subject: 'Nepali', title: 'Chapter 11: रारा भ्रमण (दैनिकी)', link: 'https://drive.google.com/file/d/1QJONcOzYBEJ1zcvWXk-wdjlDvjcol1yv/view?usp=drive_link', isPremium: false },
                 { id: 67, grade: 11, subject: 'Nepali', title: 'Chapter 12: जलस्रोत र ऊर्जा (वक्तृता)', link: 'https://drive.google.com/file/d/1QJONcOzYBEJ1zcvWXk-wdjlDvjcol1yv/view?usp=drive_link', isPremium: false },
-
-                // English grade 11
                 { id: 68, grade: 11, subject: 'English', title: 'Short Story 1: The Selfish Giant', link: 'https://drive.google.com/file/d/1WZLcd_cF2OQOkb94ROJo248IeTzksJlz/view?usp=drive_link', isPremium: false },
                 { id: 69, grade: 11, subject: 'English', title: 'Short Story 2: The Oval Portrait', link: 'https://drive.google.com/file/d/1GFra9h7f99v5PQowLbc1C9SrJQ4vr9NX/view?usp=drive_link', isPremium: false },
                 { id: 70, grade: 11, subject: 'English', title: 'Short Story 3: God Sees the Truth but Waits', link: 'https://drive.google.com/file/d/1or-fUzIpVib4TKV4obxtWTmF4Sq_uoAT/view?usp=drive_link', isPremium: false },
@@ -699,20 +716,13 @@
                 { id: 85, grade: 11, subject: 'English', title: 'One Act Play 1: Trifles', link: 'https://drive.google.com/file/d/1xO0jjNFWFM8aG1PQzoAsTWoYt1nXXOO9/view?usp=drive_link', isPremium: false },
                 { id: 86, grade: 11, subject: 'English', title: 'One Act Play 2: A Sunny Morning', link: 'https://drive.google.com/file/d/1PPCE_ZlmcRfpGwlSenpR9PYFHYdnVjOL/view?usp=drive_link', isPremium: false },
                 { id: 87, grade: 11, subject: 'English', title: 'One Act Play 3: Refund', link: 'https://drive.google.com/file/d/1MNPZk9zEaQKkPPexdBdf5TL9jmJ9O91D/view?usp=drive_link', isPremium: false },
-
-                // Computer Science grade 11
                 { id: 105, grade: 11, subject: 'Computer Science', title: 'Computer System', link: 'https://drive.google.com/file/d/10XsdgPqsIcxVk-OgkVdCgTjUwRXzad9T/view', isPremium: false },
                 { id: 106, grade: 11, subject: 'Computer Science', title: 'Number System', link: 'https://drive.google.com/file/d/1NG6wBIswzHTNUs0M_o1KEETF42zzTJDO/view', isPremium: false },
-
-                // Economics grade 11
                 { id: 103, grade: 11, subject: 'Economics', title: 'Basic Concept of Economics and Allocation of Resource', link: 'https://drive.google.com/file/d/1NSkP2fRnDRajGjekFAhYQpb1yujkUg8Y/view', isPremium: false },
                 { id: 104, grade: 11, subject: 'Economics', title: 'Demand, Supply and Market Equilibrium', link: 'https://drive.google.com/file/d/1HEF4vS2yj3I3G_zJ0nI2i8DIlJIc8F6f/view', isPremium: false }
             ],
             '12': [
-                // English grade 12
                 { id: 67, grade: 12, subject: 'English', title: 'All chapter Notes', link: 'https://drive.google.com/file/d/1BqvnQbwHArrfTJyayfvMpO6K4w_qHYxu/view?usp=sharing', isPremium: false },
-
-                // Nepali grade 12
                 { id: 56, grade: 12, subject: 'Nepali', title: 'All chapter Notes', link: 'https://drive.google.com/file/d/1tXMGn94Kc3-DOhNaoXJgMqzXL9uuFiwq/view?usp=drive_link', isPremium: false },
                 { id: 44, grade: 12, subject: 'Nepali', title: 'Chapter 1: आमाको सपना', link: 'https://drive.google.com/file/d/17k0Pn06jyisTNs9NWg3uI2yUtlc2A2Ns/view?usp=drive_link', isPremium: false },
                 { id: 45, grade: 12, subject: 'Nepali', title: 'Chapter 2: विरहिणी दमयन्ती', link: 'https://drive.google.com/file/d/1Cd8K4t86nSyYL1xgvyQgU1Vfm_P59pj-/view?usp=drive_link', isPremium: false },
@@ -726,20 +736,14 @@
                 { id: 53, grade: 12, subject: 'Nepali', title: 'Chapter 10: नेपाली पहिचान', link: '#', isPremium: false },
                 { id: 54, grade: 12, subject: 'Nepali', title: 'Chapter 11: सहकारी', link: '#', isPremium: false },
                 { id: 55, grade: 12, subject: 'Nepali', title: 'Chapter 12: जीवन मार्ग', link: '#', isPremium: false },
-
-                // Physics grade 12
                 { id: 90, grade: 12, subject: 'Physics', title: 'NEB Solution of Physic', link: 'https://drive.google.com/file/d/1LPE32JyGu0n20MJheD1lq0o-6qLtokjK/view?usp=drive_link', isPremium: false },
                 { id: 888, grade: 12, subject: 'Physics', title: 'PYQ part 1', link: 'https://drive.google.com/file/d/18iD477VUE6xzQFfaaWvkQx7d3PvZK7k3/view', isPremium: false },
                 { id: 889, grade: 12, subject: 'Physics', title: 'PYQ part 2', link: 'https://drive.google.com/file/d/1evkTPn89SR8SKWuUMmk5txbMkO524d1a/view', isPremium: false },
                 { id: 890, grade: 12, subject: 'Physics', title: 'PYQ part 3', link: 'https://drive.google.com/file/d/10pNcsw0Hsl6D1aRm7QgUyKExyVz0Fhnc/view', isPremium: false },     
-
-                // Chemistry grade 12
                 { id: 91, grade: 12, subject: 'Chemistry', title: 'NEB Solution of CHEMISTRY ', link: 'https://drive.google.com/file/d/1Xc9EBCoFfBQCe7cEWTvboOCXe1sEaRWO/view?usp=drive_link', isPremium: false },
                 { id: 92, grade: 12, subject: 'Chemistry', title: 'Chemistry (Old Course) Model Question', link: 'https://drive.google.com/file/d/1jtYvAHccbyaQJvSrArK8GkR7td4pQG_F/view?usp=drive_link', isPremium: false },
                 { id: 93, grade: 12, subject: 'Chemistry', title: 'Chemistry (New Course) Model Question', link: 'https://drive.google.com/file/d/1LbdV2IJ3_l5bS7x7Y4adO-NQdLxxiAjL/view?usp=drive_link', isPremium: false },
                 { id: 94, grade: 12, subject: 'Chemistry', title: 'Organic Chemistry All Reaction', link: 'https://drive.google.com/file/d/1GfCRiOT3DRgs0pMQVq4lWii7CKdrL9Zh/view?usp=sharing', isPremium: false },
-
-                // Computer Science grade 12
                 { id: 88, grade: 12, subject: 'Computer Science', title: 'Chapter 1: Database Management System-DBMS', link: 'https://drive.google.com/file/d/1DtSP6LLwHNyjoocexF27JqufbCCWk5xW/view?usp=drive_link', isPremium: false },
                 { id: 89, grade: 12, subject: 'Computer Science', title: 'Chapter 2: C Programming', link: 'https://drive.google.com/file/d/17jaxvRuaGkUPgxaoj09z53EpA7sTbe6X/view?usp=drive_link', isPremium: false },
                 { id: 97, grade: 12, subject: 'Computer Science', title: 'Chapter 3: Web Technology', link: 'https://drive.google.com/file/d/1eBIC14NIjS0OrQ2noOr-bazkf8I6AUqg/view?usp=drive_link', isPremium: false },
@@ -748,8 +752,6 @@
                 { id: 100, grade: 12, subject: 'Computer Science', title: 'Model Questions Papers', link: 'https://drive.google.com/file/d/1I9AsK1N4rpr5Knn77kOYvZXCWJuGzNze/view?usp=drive_link', isPremium: false },
                 { id: 101, grade: 12, subject: 'Computer Science', title: 'Important Questions', link: 'https://drive.google.com/file/d/1qgWiKrtiOWFBUsayWyaKrd7UbMJyBFwK/view?usp=drive_link', isPremium: false },
                 { id: 102, grade: 12, subject: 'Computer Science', title: 'Extra C Programming Solution', link: 'https://drive.google.com/file/d/1JWEsgCwlMlJSZnjpqcVRfkdq4ormqiGD/view?usp=drive_link', isPremium: false },
-
-                // Mathematics grade 12
                 { id: 9888, grade: 12, subject: 'Mathematics', title: 'PYQ part 1', link: 'https://drive.google.com/file/d/1be2JQyA_7_Z7Qf8GKwyMrTPQahiqBJEg/view', isPremium: false },
                 { id: 9889, grade: 12, subject: 'Mathematics', title: 'PYQ part 2', link: 'https://drive.google.com/file/d/1Uc2IGX_TSWcpLXMij2ANeBt0I33ZCXWY/view', isPremium: false },
                 { id: 9890, grade: 12, subject: 'Mathematics', title: 'PYQ part 3', link: 'https://drive.google.com/file/d/1FHrtcaL4JQfAAEgVDSKKQJbvw9ywuCW4/view', isPremium: false }
@@ -842,7 +844,7 @@
                 }
             ]
         },
-        outBooks: {
+        ourBooks: {
             '11': [
                 {
                     id: 5001,
@@ -1161,7 +1163,7 @@
         const [activeQuizData, setActiveQuizData] = useState(null);
         const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
         const [userAnswers, setUserAnswers] = useState([]);
-        const [timer, setTimer] = useState(15); // 15 seconds timer
+        const [timer, setTimer] = useState(15);
         const [isTimeUp, setIsTimeUp] = useState(false);
         const timerRef = useRef(null);
 
@@ -1207,11 +1209,8 @@
                 return { score: correct, correctAnswers: correct, wrongAnswers: total - correct, percentage: total > 0 ? Math.round((correct / total) * 100) : 0 };
             }, [quizData, userAnswers]);
             
-            // Smooth transition effect
             useEffect(() => {
-                const timer = setTimeout(() => {
-                    // Force re-render for smooth animation
-                }, 100);
+                const timer = setTimeout(() => {}, 100);
                 return () => clearTimeout(timer);
             }, []);
 
@@ -1583,7 +1582,6 @@
     // =================================================================================
     const WelcomeCelebration = ({ name }) => {
         useEffect(() => {
-            // Create confetti animation
             const confettiElements = document.querySelectorAll('.confetti');
             confettiElements.forEach((confetti, index) => {
                 const left = Math.random() * 100;
@@ -1678,7 +1676,6 @@
                     </div>
                 </div>
                 
-                {/* Fixed Button Container - Always Visible */}
                 <div className="flex flex-col sm:flex-row gap-3 p-4 border-t border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 rounded-b-xl">
                     <button 
                         onClick={handleDownload} 
@@ -1860,95 +1857,399 @@
         );
     };
     
-    const Dashboard = ({ user, setActiveSection, lastViewedNote, onGradeChange }) => {
-        const streamInfo = DATA.streams.find(s => s.id === user.stream);
-        const quote = DATA.motivationalQuotes[new Date().getDate() % DATA.motivationalQuotes.length];
-        
-        const ActionCard = ({ icon, title, description, onClick, color = 'from-teal-500 to-cyan-500' }) => (
-            <button 
-                onClick={onClick} 
-                className={`p-6 rounded-2xl shadow-md text-left w-full hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 text-white bg-gradient-to-br ${color} touch-target`}
-            >
-                <i className={`${icon} text-3xl mb-3 text-white/80`}></i>
-                <h3 className="font-bold text-xl font-display">{title}</h3>
-                <p className="text-white/80 text-sm">{description}</p>
-            </button>
-        );
-        
-        return (
-            <div className="section space-y-8 animate-fadeIn">
-                <div className={`p-8 rounded-2xl shadow-lg relative overflow-hidden text-white bg-gradient-to-br ${streamInfo?.color || 'from-teal-600 to-cyan-700'}`}>
-                    <div className="absolute -right-10 -top-10 text-white/10 text-9xl transform rotate-12">
-                        <i className="fas fa-graduation-cap"></i>
-                    </div>
-                    <div className="flex justify-between items-start relative z-10">
-                        <div>
-                            <h1 className="text-4xl font-bold font-display">Welcome, {user.name}!</h1>
-                            <p className="mt-2 text-lg opacity-90">
-                                Your Grade {user.grade} <span className="font-semibold">{streamInfo?.name}</span> hub is ready.
-                            </p>
-                        </div>
-                        <div className="flex flex-col items-end gap-2">
-                            <select 
-                                value={user.grade} 
-                                onChange={(e) => onGradeChange(e.target.value)} 
-                                className="bg-white/20 backdrop-blur-sm text-white border border-white/30 rounded-lg px-3 py-1 text-sm focus:ring-2 focus:ring-white/50"
-                            >
-                                <option value="11">Grade 11</option>
-                                <option value="12">Grade 12</option>
-                            </select>
-                            <span className="text-sm opacity-80">Switch Grade</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <ActionCard 
-                        icon="fas fa-compass" 
-                        title="Explore Notes" 
-                        description="Browse all notes for your stream." 
-                        onClick={() => setActiveSection({name: 'explorer'})} 
-                    />
-                    <ActionCard 
-                        icon="fas fa-feather-alt" 
-                        title="Exam Prep" 
-                        description="Find routines, checklists & model questions." 
-                        onClick={() => setActiveSection({name: 'examprep'})}
-                        color="from-blue-500 to-indigo-500"
-                    />
-                    <ActionCard 
-                        icon="fas fa-tools" 
-                        title="Quick Tools" 
-                        description="GPA Calculator, unit converter, and more." 
-                        onClick={() => setActiveSection({name: 'tools'})}
-                        color="from-purple-500 to-pink-500"
-                    />
-                </div>
-                
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {lastViewedNote && (
-                        <div className="card p-6">
-                            <h3 className="font-bold text-lg mb-3">Continue Studying</h3>
-                            <div 
-                                className="border-l-4 border-teal-500 pl-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-800 rounded-r-md cursor-pointer" 
-                                onClick={() => setActiveSection({name:'explorer'})}
-                            >
-                                <p className="font-semibold">{lastViewedNote.title}</p>
-                                <p className="text-sm text-slate-500">{lastViewedNote.subject} - Grade {lastViewedNote.grade}</p>
+const Dashboard = ({ user, setActiveSection, lastViewedNote, onGradeChange }) => {
+    const streamInfo = DATA.streams.find(s => s.id === user.stream);
+    const quote = DATA.motivationalQuotes[new Date().getDate() % DATA.motivationalQuotes.length];
+    
+    // Get user's subjects and recent notes
+    const userSubjects = [...(streamInfo?.compulsory || []), ...(user.optionals || [])];
+    const recentNotes = DATA.notes[user.grade]?.filter(note => 
+        userSubjects.includes(note.subject)
+    )?.slice(0, 3) || [];
+
+    // Calculate stats
+    const totalNotes = DATA.notes[user.grade]?.filter(note => 
+        userSubjects.includes(note.subject)
+    )?.length || 0;
+
+    const today = new Date();
+    const greetings = ["Rise and shine!", "Hello there!", "Welcome back!", "Great to see you!", "Let's learn!"];
+    const greeting = greetings[today.getHours() % greetings.length];
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-900 dark:via-blue-900/20 dark:to-cyan-900/20">
+            {/* Decorative Background Elements */}
+            <div className="absolute top-0 left-0 w-72 h-72 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob"></div>
+            <div className="absolute top-0 right-0 w-72 h-72 bg-yellow-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-2000"></div>
+            <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-blob animation-delay-4000"></div>
+
+            <div className="relative z-10">
+                {/* Main Header */}
+                <div className="pt-8 pb-4 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Welcome Section */}
+                        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-white/20 dark:border-slate-700/50 mb-8 relative overflow-hidden">
+                            {/* Animated background pattern */}
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-teal-500/10 to-cyan-500/10 rounded-full -translate-y-32 translate-x-32"></div>
+                            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-amber-500/10 to-orange-500/10 rounded-full translate-y-24 -translate-x-24"></div>
+                            
+                            <div className="relative z-10">
+                                <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                                    <div className="flex-1">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="relative">
+                                                <div className="w-20 h-20 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center shadow-lg">
+                                                    <i className="fas fa-user-graduate text-2xl text-white"></i>
+                                                </div>
+                                                <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center border-4 border-white dark:border-slate-800">
+                                                    <i className="fas fa-star text-xs text-white"></i>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p className="text-teal-600 dark:text-teal-400 font-semibold mb-1">{greeting}</p>
+                                                <h1 className="text-4xl font-bold text-slate-800 dark:text-white font-display">
+                                                    Hello, {user.name}! 
+                                                </h1>
+                                                <p className="text-slate-600 dark:text-slate-400 text-lg mt-1">
+                                                    Ready to conquer your <span className="font-semibold text-teal-600 dark:text-teal-400">{streamInfo?.name}</span> studies today?
+                                                </p>
+                                            </div>
+                                        </div>
+
+                                        {/* Quick Stats */}
+                                        <div className="flex flex-wrap gap-3 mt-6">
+                                            <div className="flex items-center gap-2 bg-teal-500/10 dark:bg-teal-500/20 px-4 py-2 rounded-xl border border-teal-500/20">
+                                                <i className="fas fa-book text-teal-600 dark:text-teal-400"></i>
+                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{totalNotes} study notes</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 bg-blue-500/10 dark:bg-blue-500/20 px-4 py-2 rounded-xl border border-blue-500/20">
+                                                <i className="fas fa-graduation-cap text-blue-600 dark:text-blue-400"></i>
+                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Grade {user.grade}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2 bg-amber-500/10 dark:bg-amber-500/20 px-4 py-2 rounded-xl border border-amber-500/20">
+                                                <i className="fas fa-subscript text-amber-600 dark:text-amber-400"></i>
+                                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">{user.optionals?.length || 0} subjects</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex flex-col items-end gap-3">
+                                        <div className="bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 p-4 rounded-2xl shadow-lg">
+                                            <p className="text-white/80 text-sm mb-2">Current Grade</p>
+                                            <select 
+                                                value={user.grade} 
+                                                onChange={(e) => onGradeChange(e.target.value)} 
+                                                className="bg-white/10 backdrop-blur-sm text-white border border-white/20 rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-white/50 min-w-[140px]"
+                                            >
+                                                <option value="11">Grade 11</option>
+                                                <option value="12">Grade 12</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    )}
-                    <div className="card p-6 flex items-center">
-                        <i className="fas fa-lightbulb text-4xl text-amber-400 mr-4"></i>
-                        <div>
-                            <h3 className="font-bold text-lg">Quote of the Day</h3>
-                            <p className="text-slate-600 dark:text-slate-300 italic">"{quote}"</p>
+
+                        {/* Main Actions Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            {/* Explore Notes */}
+                            <div 
+                                onClick={() => setActiveSection({name: 'explorer'})}
+                                className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                            >
+                                <div className="bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl p-1 shadow-2xl">
+                                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 h-full group-hover:bg-transparent group-hover:backdrop-blur-sm transition-all duration-300">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-teal-500 to-cyan-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                                <i className="fas fa-compass text-xl text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-lg text-slate-800 dark:text-white group-hover:text-white transition-colors">Explore Notes</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 group-hover:text-white/80 text-sm">Browse all study materials</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-teal-600 dark:text-teal-400 group-hover:text-white text-sm font-semibold">Get Started →</span>
+                                            <div className="w-8 h-8 bg-teal-500/20 rounded-full flex items-center justify-center group-hover:bg-white/20">
+                                                <i className="fas fa-arrow-right text-teal-600 dark:text-teal-400 group-hover:text-white text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Digital Library */}
+                            <div 
+                                onClick={() => setActiveSection({name: 'library'})}
+                                className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                            >
+                                <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl p-1 shadow-2xl">
+                                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 h-full group-hover:bg-transparent group-hover:backdrop-blur-sm transition-all duration-300">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                                <i className="fas fa-book-open text-xl text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-lg text-slate-800 dark:text-white group-hover:text-white transition-colors">Digital Library</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 group-hover:text-white/80 text-sm">Reference books & resources</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-blue-600 dark:text-blue-400 group-hover:text-white text-sm font-semibold">Explore Now →</span>
+                                            <div className="w-8 h-8 bg-blue-500/20 rounded-full flex items-center justify-center group-hover:bg-white/20">
+                                                <i className="fas fa-arrow-right text-blue-600 dark:text-blue-400 group-hover:text-white text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Exam Prep */}
+                            <div 
+                                onClick={() => setActiveSection({name: 'examprep'})}
+                                className="group cursor-pointer transform hover:scale-105 transition-all duration-300"
+                            >
+                                <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl p-1 shadow-2xl">
+                                    <div className="bg-white dark:bg-slate-800 rounded-xl p-6 h-full group-hover:bg-transparent group-hover:backdrop-blur-sm transition-all duration-300">
+                                        <div className="flex items-center gap-4 mb-4">
+                                            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                                                <i className="fas fa-feather-alt text-xl text-white"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-lg text-slate-800 dark:text-white group-hover:text-white transition-colors">Exam Prep</h3>
+                                                <p className="text-slate-600 dark:text-slate-400 group-hover:text-white/80 text-sm">Quizzes & model questions</p>
+                                            </div>
+                                        </div>
+                                        <div className="flex justify-between items-center">
+                                            <span className="text-purple-600 dark:text-purple-400 group-hover:text-white text-sm font-semibold">Practice Now →</span>
+                                            <div className="w-8 h-8 bg-purple-500/20 rounded-full flex items-center justify-center group-hover:bg-white/20">
+                                                <i className="fas fa-arrow-right text-purple-600 dark:text-purple-400 group-hover:text-white text-sm"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Bottom Section */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                            {/* Recent Activity & Quick Access */}
+                            <div className="space-y-6">
+                                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-700">
+                                    <div className="flex items-center justify-between mb-6">
+                                        <h2 className="text-2xl font-bold text-slate-800 dark:text-white font-display">
+                                            Quick Access
+                                        </h2>
+                                        <div className="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center">
+                                            <i className="fas fa-bolt text-teal-600 dark:text-teal-400"></i>
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                        {recentNotes.map((note, index) => (
+                                            <div 
+                                                key={note.id}
+                                                onClick={() => setActiveSection({name: 'explorer'})}
+                                                className="group flex items-center gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:border-teal-300 dark:hover:border-teal-600 hover:bg-teal-50 dark:hover:bg-teal-900/20 cursor-pointer transition-all duration-300"
+                                            >
+                                                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${
+                                                    index === 0 ? 'from-amber-500 to-orange-500' :
+                                                    index === 1 ? 'from-blue-500 to-cyan-500' :
+                                                    'from-purple-500 to-pink-500'
+                                                } flex items-center justify-center shadow-lg`}>
+                                                    <i className="fas fa-file-alt text-white text-sm"></i>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h3 className="font-semibold text-slate-800 dark:text-white group-hover:text-teal-600 dark:group-hover:text-teal-400 transition-colors">
+                                                        {note.title}
+                                                    </h3>
+                                                    <p className="text-sm text-slate-500 dark:text-slate-400">
+                                                        {note.subject} • Grade {note.grade}
+                                                    </p>
+                                                </div>
+                                                <i className="fas fa-arrow-right text-slate-400 group-hover:text-teal-500 transform group-hover:translate-x-1 transition-all duration-300"></i>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {lastViewedNote && (
+                                        <div className="mt-6 p-4 bg-gradient-to-r from-teal-500/10 to-cyan-500/10 rounded-xl border border-teal-500/20">
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-10 h-10 bg-teal-500 rounded-xl flex items-center justify-center">
+                                                    <i className="fas fa-play text-white"></i>
+                                                </div>
+                                                <div className="flex-1">
+                                                    <p className="font-semibold text-slate-800 dark:text-white">Continue Studying</p>
+                                                    <p className="text-sm text-slate-600 dark:text-slate-400 truncate">{lastViewedNote.title}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Additional Tools */}
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div 
+                                        onClick={() => setActiveSection({name: 'tools'})}
+                                        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+                                    >
+                                        <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                                            <i className="fas fa-calculator text-white"></i>
+                                        </div>
+                                        <h3 className="font-semibold text-slate-800 dark:text-white mb-1">GPA Calculator</h3>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">Calculate your grades</p>
+                                    </div>
+                                    <div 
+                                        onClick={() => setActiveSection({name: 'books'})}
+                                        className="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer group"
+                                    >
+                                        <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300">
+                                            <i className="fas fa-book text-white"></i>
+                                        </div>
+                                        <h3 className="font-semibold text-slate-800 dark:text-white mb-1">Out Books</h3>
+                                        <p className="text-sm text-slate-500 dark:text-slate-400">Study guides</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Motivation & Progress */}
+                            <div className="space-y-6">
+                                {/* Inspiration Card */}
+                                <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16"></div>
+                                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/10 rounded-full translate-y-12 -translate-x-12"></div>
+                                    
+                                    <div className="relative z-10">
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
+                                                <i className="fas fa-lightbulb text-white text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-white text-lg">Daily Inspiration</h3>
+                                                <p className="text-white/80 text-sm">Words to motivate you</p>
+                                            </div>
+                                        </div>
+                                        <p className="text-white text-lg italic leading-relaxed mb-4">
+                                            "{quote}"
+                                        </p>
+                                        <div className="flex items-center gap-2 text-white/60 text-sm">
+                                            <i className="fas fa-quote-left"></i>
+                                            <span>Ganesh Dai Academy</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Progress Card */}
+                                <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-700">
+                                    <h3 className="font-bold text-slate-800 dark:text-white text-lg mb-6 flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-teal-500/10 rounded-xl flex items-center justify-center">
+                                            <i className="fas fa-trophy text-teal-600 dark:text-teal-400"></i>
+                                        </div>
+                                        Your Study Journey
+                                    </h3>
+
+                                    <div className="space-y-5">
+                                        <div>
+                                            <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+                                                <span>Weekly Progress</span>
+                                                <span className="font-semibold text-teal-600 dark:text-teal-400">65%</span>
+                                            </div>
+                                            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
+                                                <div className="bg-gradient-to-r from-teal-500 to-cyan-500 h-3 rounded-full transition-all duration-1000 ease-out" style={{width: '65%'}}></div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+                                                <span>Notes Completed</span>
+                                                <span className="font-semibold text-blue-600 dark:text-blue-400">12/20</span>
+                                            </div>
+                                            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
+                                                <div className="bg-gradient-to-r from-blue-500 to-indigo-500 h-3 rounded-full transition-all duration-1000 ease-out" style={{width: '60%'}}></div>
+                                            </div>
+                                        </div>
+
+                                        <div>
+                                            <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400 mb-2">
+                                                <span>Quiz Mastery</span>
+                                                <span className="font-semibold text-purple-600 dark:text-purple-400">78%</span>
+                                            </div>
+                                            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3">
+                                                <div className="bg-gradient-to-r from-purple-500 to-pink-500 h-3 rounded-full transition-all duration-1000 ease-out" style={{width: '78%'}}></div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-700">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-sm text-slate-600 dark:text-slate-400">Next milestone in</span>
+                                            <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">3 days</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Quick Tip */}
+                                <div className="bg-gradient-to-br from-slate-800 to-slate-900 dark:from-slate-700 dark:to-slate-800 rounded-2xl p-5 shadow-xl">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="w-10 h-10 bg-cyan-500/20 rounded-xl flex items-center justify-center">
+                                            <i className="fas fa-tips text-cyan-400"></i>
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-white">Pro Tip</h4>
+                                            <p className="text-cyan-100 text-sm">Study smarter, not harder</p>
+                                        </div>
+                                    </div>
+                                    <p className="text-white/80 text-sm leading-relaxed">
+                                        Review your notes within 24 hours of learning - it boosts retention by up to 60%!
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Bottom CTA */}
+                        <div className="mt-8 text-center">
+                            <div className="bg-gradient-to-r from-teal-500 via-cyan-500 to-blue-500 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+                                <div className="absolute inset-0 bg-black/10"></div>
+                                <div className="relative z-10">
+                                    <h2 className="text-3xl font-bold text-white font-display mb-3">
+                                        Ready to Excel? 🌟
+                                    </h2>
+                                    <p className="text-white/90 text-lg mb-6 max-w-2xl mx-auto">
+                                        Your academic success story starts here. Access premium resources, master your subjects, and achieve your dreams.
+                                    </p>
+                                    <button 
+                                        onClick={() => setActiveSection({name: 'explorer'})}
+                                        className="bg-white text-teal-600 font-bold py-4 px-8 rounded-full hover:bg-slate-100 transition-colors shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300 text-lg"
+                                    >
+                                        <i className="fas fa-rocket mr-2"></i>Start Learning Journey
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        );
-    };
+
+            <style jsx>{`
+                @keyframes blob {
+                    0% { transform: translate(0px, 0px) scale(1); }
+                    33% { transform: translate(30px, -50px) scale(1.1); }
+                    66% { transform: translate(-20px, 20px) scale(0.9); }
+                    100% { transform: translate(0px, 0px) scale(1); }
+                }
+                .animate-blob {
+                    animation: blob 7s infinite;
+                }
+                .animation-delay-2000 {
+                    animation-delay: 2s;
+                }
+                .animation-delay-4000 {
+                    animation-delay: 4s;
+                }
+            `}</style>
+        </div>
+    );
+};
 
     const NotesExplorer = ({ user, isPremium, bookmarkedNotes, onBookmark, onViewNote, onGoPremium }) => {
         const streamSubjects = useMemo(() => { 
@@ -2037,7 +2338,6 @@
         const [search, setSearch] = useState('');
         const [category, setCategory] = useState('all');
         
-        // Get library items for the user's grade only
         const libraryItems = DATA.digitalLibrary[user.grade] || [];
         
         const filtered = libraryItems.filter(it =>
@@ -2137,11 +2437,10 @@
         );
     };
 
-    const OurBooks = ({ user, isPremium, onViewNote, onGoPremium }) => {
+    const OutBooks = ({ user, isPremium, onViewNote, onGoPremium }) => {
         const [search, setSearch] = useState('');
         const [category, setCategory] = useState('all');
         
-        // Get books for the user's grade only
         const books = DATA.ourBooks[user.grade] || [];
         
         const filtered = books.filter(it =>
@@ -2158,7 +2457,7 @@
 
         return (
             <div className="section animate-fadeIn">
-                <h2 className="text-3xl font-bold font-display mb-4">Our Books - Grade {user.grade}</h2>
+                <h2 className="text-3xl font-bold font-display mb-4">Out Books - Grade {user.grade}</h2>
 
                 <div className="mb-6 space-y-4">
                     <input
@@ -2909,6 +3208,7 @@
         const [showWelcomeCelebration, setShowWelcomeCelebration] = useState(false);
         const [showCertificateModal, setShowCertificateModal] = useState(false);
         const [isFirstTimeUser, setIsFirstTimeUser] = useState(false);
+        const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
         useEffect(() => {
             const storedUser = getJSONFromLocalStorage('gdaUser', null);
@@ -2920,13 +3220,11 @@
                 setBookmarkedNotes(getJSONFromLocalStorage('gdaBookmarkedNotes', []));
                 setLastViewedNoteId(getJSONFromLocalStorage('gdaLastViewedNoteId', null));
                 
-                // Show celebration for first-time users
                 if (isFirstTime) {
                     setIsFirstTimeUser(true);
                     setShowWelcomeCelebration(true);
                     setJSONToLocalStorage('gdaFirstTime', false);
                     
-                    // Auto-show certificate after celebration
                     setTimeout(() => {
                         setShowWelcomeCelebration(false);
                         setShowCertificateModal(true);
@@ -2941,12 +3239,10 @@
             setUser(newUser); 
             setJSONToLocalStorage('gdaUser', newUser); 
             
-            // Show celebration for new users
             setIsFirstTimeUser(true);
             setShowWelcomeCelebration(true);
             setJSONToLocalStorage('gdaFirstTime', false);
             
-            // Auto-show certificate after celebration
             setTimeout(() => {
                 setShowWelcomeCelebration(false);
                 setShowCertificateModal(true);
@@ -3033,7 +3329,7 @@
                     );
                 case 'books': 
                     return (
-                        <OurBooks 
+                        <OutBooks 
                             user={user} 
                             isPremium={isPremium} 
                             onViewNote={handleViewNote} 
@@ -3052,7 +3348,7 @@
 
         const NavButton = ({ sectionName, icon, label, badgeCount }) => (
             <button 
-                onClick={() => setActiveSection({name: sectionName})} 
+                onClick={() => { setActiveSection({name: sectionName}); setMobileMenuOpen(false); }} 
                 className={`w-full flex items-center justify-between gap-3 p-3 rounded-lg font-semibold text-left nav-link touch-target ${activeSection.name === sectionName ? 'active' : ''}`}
             >
                 <div className="flex items-center gap-3">
@@ -3081,21 +3377,6 @@
             </div>
         );
 
-        const MobileNavItem = ({ sectionName, icon, label, badgeCount }) => (
-            <button 
-                onClick={() => setActiveSection({name: sectionName})} 
-                className={`mobile-nav-item ${activeSection.name === sectionName ? 'active' : ''}`}
-            >
-                <i className={icon}></i>
-                <span>{label}</span>
-                {badgeCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-teal-500 text-white text-xs h-4 w-4 rounded-full flex items-center justify-center">
-                        {badgeCount}
-                    </span>
-                )}
-            </button>
-        );
-
         return (
             <Fragment>
                 {showWelcomeCelebration && <WelcomeCelebration name={user.name} />}
@@ -3117,7 +3398,21 @@
                 )}
                 
                 <div className="flex flex-col md:flex-row min-h-screen">
-                    <aside className="desktop-sidebar w-full md:w-64 bg-white dark:bg-slate-900 p-4 flex-shrink-0 md:border-r border-slate-200 dark:border-slate-800 flex flex-col">
+                    <button 
+                        className="mobile-menu-toggle md:hidden"
+                        onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                    >
+                        <i className="fas fa-bars"></i>
+                    </button>
+
+                    {mobileMenuOpen && (
+                        <div 
+                            className="overlay-mobile md:hidden"
+                            onClick={() => setMobileMenuOpen(false)}
+                        ></div>
+                    )}
+                    
+                    <aside className={`desktop-sidebar ${mobileMenuOpen ? 'mobile-open' : ''} w-full md:w-64 bg-white dark:bg-slate-900 p-4 flex-shrink-0 md:border-r border-slate-200 dark:border-slate-800 flex flex-col`}>
                         <div>
                             <div className="text-center md:text-left mb-6 flex items-center gap-3">
                                 <img src={DATA.logoUrl} alt="Logo" className="h-12 w-12 rounded-full" />
@@ -3138,7 +3433,7 @@
                                <NavButton sectionName="about"   icon="fas fa-info-circle" label="About" />
 
                                <button 
-                                   onClick={() => setShowPresentationModal(true)} 
+                                   onClick={() => { setShowPresentationModal(true); setMobileMenuOpen(false); }} 
                                    className="w-full flex items-center gap-3 p-3 rounded-lg font-semibold text-left nav-link touch-target"
                                >
                                    <i className="fas fa-chalkboard-teacher w-5 text-center"></i> 
@@ -3175,15 +3470,6 @@
                             {renderSection()}
                         </ErrorBoundary>
                     </main>
-                </div>
-                
-                {/* Mobile Navigation */}
-                <div className="mobile-nav">
-                    <MobileNavItem sectionName="dashboard" icon="fas fa-home-alt" label="Home" />
-                    <MobileNavItem sectionName="explorer" icon="fas fa-compass" label="Notes" />
-                    <MobileNavItem sectionName="studylist" icon="fas fa-bookmark" label="Study List" badgeCount={bookmarkedNotes.length} />
-                    <MobileNavItem sectionName="examprep" icon="fas fa-feather-alt" label="Exam" />
-                    <MobileNavItem sectionName="tools" icon="fas fa-tools" label="Tools" />
                 </div>
             </Fragment>
         );
