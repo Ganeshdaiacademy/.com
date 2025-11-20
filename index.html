@@ -2335,326 +2335,1302 @@ const Dashboard = ({ user, setActiveSection, lastViewedNote, onGradeChange }) =>
     };
 
     const DigitalLibrary = ({ user, isPremium, onViewNote, onGoPremium }) => {
-        const [search, setSearch] = useState('');
-        const [category, setCategory] = useState('all');
-        
-        const libraryItems = DATA.digitalLibrary[user.grade] || [];
-        
-        const filtered = libraryItems.filter(it =>
-            (it.title.toLowerCase().includes(search.toLowerCase()) ||
-            (it.description || '').toLowerCase().includes(search.toLowerCase())) &&
-            (category === 'all' || (category === 'premium' && it.isPremium) || (category === 'free' && !it.isPremium))
-        );
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('all');
+    const [hoveredCard, setHoveredCard] = useState(null);
+    
+    const libraryItems = DATA.digitalLibrary[user.grade] || [];
+    
+    const filteredItems = libraryItems.filter(item =>
+        (item.title.toLowerCase().includes(search.toLowerCase()) ||
+        (item.description || '').toLowerCase().includes(search.toLowerCase())) &&
+        (category === 'all' || (category === 'premium' && item.isPremium) || (category === 'free' && !item.isPremium))
+    );
 
-        const categories = [
-            { id: 'all', name: 'All Resources' },
-            { id: 'free', name: 'Free Resources' },
-            { id: 'premium', name: 'Premium Resources' }
-        ];
+    const categories = [
+        { 
+            id: 'all', 
+            name: 'All Resources', 
+            icon: 'fas fa-layer-group', 
+            color: 'from-teal-500 to-cyan-500',
+            bgColor: 'bg-gradient-to-r from-teal-500 to-cyan-500'
+        },
+        { 
+            id: 'free', 
+            name: 'Free Access', 
+            icon: 'fas fa-unlock', 
+            color: 'from-green-500 to-emerald-500',
+            bgColor: 'bg-gradient-to-r from-green-500 to-emerald-500'
+        },
+        { 
+            id: 'premium', 
+            name: 'Premium', 
+            icon: 'fas fa-crown', 
+            color: 'from-amber-500 to-orange-500',
+            bgColor: 'bg-gradient-to-r from-amber-500 to-orange-500'
+        }
+    ];
 
-        return (
-            <div className="section animate-fadeIn">
-                <h2 className="text-3xl font-bold font-display mb-4">Digital Library - Grade {user.grade}</h2>
-
-                <div className="mb-6 space-y-4">
-                    <input
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search library..."
-                        className="w-full pl-4 pr-4 py-3 rounded-full border-2 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-teal-500"
-                    />
-                    
-                    <div className="flex overflow-x-auto pb-2 gap-2">
-                        {categories.map(cat => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setCategory(cat.id)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-target ${
-                                    category === cat.id 
-                                    ? 'bg-teal-500 text-white' 
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                                }`}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
+    const ResourceCard = ({ item, index }) => (
+        <div 
+            className="group relative"
+            onMouseEnter={() => setHoveredCard(index)}
+            onMouseLeave={() => setHoveredCard(null)}
+        >
+            {/* Animated Background Glow */}
+            <div className={`absolute -inset-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 ${
+                hoveredCard === index ? 'animate-pulse' : ''
+            }`}></div>
+            
+            {/* Main Card */}
+            <div className="relative bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-2xl border border-white/20 dark:border-slate-700/50 hover:shadow-3xl transition-all duration-500 group-hover:-translate-y-3 backdrop-blur-sm">
+                {/* Floating Icon Container */}
+                <div className="absolute -top-4 left-6">
+                    <div className="relative">
+                        <div className={`w-12 h-12 ${item.isPremium ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-blue-500 to-indigo-500'} rounded-2xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
+                            <i className={`${item.isPremium ? 'fas fa-crown' : 'fas fa-book-open'} text-white text-lg`}></i>
+                        </div>
+                        {/* Floating Particles */}
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 animate-ping"></div>
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-cyan-400 rounded-full opacity-0 group-hover:opacity-100 animate-ping animation-delay-300"></div>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filtered.map(item => (
-                        <div key={item.id} className="card p-5">
-                            <div className="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 className="font-bold text-lg">{item.title}</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.description}</p>
-                                </div>
-                                {item.isPremium && !isPremium && (
-                                    <span className="text-amber-400 text-sm font-bold flex items-center">
-                                        <i className="fas fa-star mr-1"></i> Premium
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="mt-4 flex gap-2">
-                                {(!item.isPremium || isPremium) ? (
-                                    <button
-                                        onClick={() => onViewNote && onViewNote({
-                                            id: item.id,
-                                            title: item.title,
-                                            link: item.link,
-                                        })}
-                                        className="px-4 py-2 rounded-full bg-teal-500 text-white font-semibold text-sm touch-target"
-                                    >
-                                        <i className="fas fa-eye mr-2"></i> Preview
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onGoPremium}
-                                        className="px-4 py-2 rounded-full border border-amber-500 text-amber-500 font-semibold text-sm touch-target"
-                                    >
-                                        <i className="fas fa-lock mr-2"></i> Unlock
-                                    </button>
-                                )}
-                                
-                                {item.isPremium && isPremium && (
-                                    <span className="px-3 py-2 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-sm font-medium">
-                                        <i className="fas fa-check mr-1"></i> Unlocked
-                                    </span>
-                                )}
-                            </div>
+                {/* Premium Ribbon */}
+                {item.isPremium && (
+                    <div className="absolute -top-2 -right-2">
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-2xl flex items-center gap-1 transform group-hover:scale-110 transition-transform duration-300">
+                            <i className="fas fa-bolt text-xs"></i>
+                            PREMIUM
                         </div>
-                    ))}
-                    {filtered.length === 0 && (
-                        <div className="col-span-full text-center py-12">
-                            <i className="fas fa-book-open text-5xl text-slate-400 mb-4"></i>
-                            <h3 className="text-xl font-bold">No resources found</h3>
-                            <p className="text-slate-500">Try adjusting your search or category filter</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    const OutBooks = ({ user, isPremium, onViewNote, onGoPremium }) => {
-        const [search, setSearch] = useState('');
-        const [category, setCategory] = useState('all');
-        
-        const books = DATA.ourBooks[user.grade] || [];
-        
-        const filtered = books.filter(it =>
-            (it.title.toLowerCase().includes(search.toLowerCase()) ||
-            (it.description || '').toLowerCase().includes(search.toLowerCase())) &&
-            (category === 'all' || (category === 'premium' && it.isPremium) || (category === 'free' && !it.isPremium))
-        );
-
-        const categories = [
-            { id: 'all', name: 'All Books' },
-            { id: 'free', name: 'Free Books' },
-            { id: 'premium', name: 'Premium Books' }
-        ];
-
-        return (
-            <div className="section animate-fadeIn">
-                <h2 className="text-3xl font-bold font-display mb-4">Out Books - Grade {user.grade}</h2>
-
-                <div className="mb-6 space-y-4">
-                    <input
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        placeholder="Search books..."
-                        className="w-full pl-4 pr-4 py-3 rounded-full border-2 dark:border-slate-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-teal-500"
-                    />
-                    
-                    <div className="flex overflow-x-auto pb-2 gap-2">
-                        {categories.map(cat => (
-                            <button
-                                key={cat.id}
-                                onClick={() => setCategory(cat.id)}
-                                className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap touch-target ${
-                                    category === cat.id 
-                                    ? 'bg-teal-500 text-white' 
-                                    : 'bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300'
-                                }`}
-                            >
-                                {cat.name}
-                            </button>
-                        ))}
                     </div>
-                </div>
+                )}
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filtered.map(item => (
-                        <div key={item.id} className="card p-5">
-                            <div className="flex justify-between items-start mb-3">
-                                <div>
-                                    <h4 className="font-bold text-lg">{item.title}</h4>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{item.description}</p>
-                                </div>
-                                {item.isPremium && !isPremium && (
-                                    <span className="text-amber-400 text-sm font-bold flex items-center">
-                                        <i className="fas fa-star mr-1"></i> Premium
-                                    </span>
-                                )}
-                            </div>
-
-                            <div className="mt-4 flex gap-2">
-                                {(!item.isPremium || isPremium) ? (
-                                    <button
-                                        onClick={() => onViewNote && onViewNote({
-                                            id: item.id,
-                                            title: item.title,
-                                            link: item.link,
-                                        })}
-                                        className="px-4 py-2 rounded-full bg-teal-500 text-white font-semibold text-sm touch-target"
-                                    >
-                                        <i className="fas fa-eye mr-2"></i> Preview
-                                    </button>
-                                ) : (
-                                    <button
-                                        onClick={onGoPremium}
-                                        className="px-4 py-2 rounded-full border border-amber-500 text-amber-500 font-semibold text-sm touch-target"
-                                    >
-                                        <i className="fas fa-lock mr-2"></i> Unlock
-                                    </button>
-                                )}
-                                
-                                {item.isPremium && isPremium && (
-                                    <span className="px-3 py-2 rounded-full bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 text-sm font-medium">
-                                        <i className="fas fa-check mr-1"></i> Unlocked
-                                    </span>
-                                )}
-                            </div>
-                        </div>
-                    ))}
-                    {filtered.length === 0 && (
-                        <div className="col-span-full text-center py-12">
-                            <i className="fas fa-book text-5xl text-slate-400 mb-4"></i>
-                            <h3 className="text-xl font-bold">No books found</h3>
-                            <p className="text-slate-500">Try adjusting your search or category filter</p>
-                        </div>
-                    )}
-                </div>
-            </div>
-        );
-    };
-
-    const AboutSection = ({ user }) => {
-        return (
-            <div className="section animate-fadeIn">
-                <h2 className="text-3xl font-bold font-display mb-4">About {DATA.appName}</h2>
-
-                <div className="card p-6 space-y-4">
-                    <p className="text-slate-600 dark:text-slate-300 leading-relaxed">
-                        {DATA.appName} — {DATA.appSubtitle}. This learning hub bundles notes, past
-                        questions, exam checklists and quick study tools for Grade 11 & 12 students.
-                        Built to be small, responsive and offline-friendly.
+                {/* Content Area */}
+                <div className="pt-8">
+                    {/* Title with Gradient Text */}
+                    <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-3 leading-tight group-hover:bg-gradient-to-r group-hover:from-blue-600 group-hover:to-purple-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
+                        {item.title}
+                    </h3>
+                    
+                    {/* Description */}
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">
+                        {item.description}
                     </p>
-                    
-                    <div className="space-y-4 mt-4">
-                        <h4 className="font-semibold">Disclaimer</h4>
-                        <p className="text-sm text-slate-500 leading-relaxed">
-                            Most of the study materials, PDFs, and documents available on this platform are created and compiled by me. 
-                            However, some files have been collected from various online sources such as educational websites, Facebook groups, 
-                            and public archives — solely for educational and reference purposes. 
-                            The aim is to make it easier for students to find all essential resources in one place. 
-                            All rights and credits go to the respective authors and content owners. 
-                            If you are a copyright holder and would like your material removed or credited differently, 
-                            please contact me, and I will respond promptly.
-                        </p>
+
+                    {/* Status Badge */}
+                    <div className="flex items-center gap-2 mb-6">
+                        {item.isPremium && !isPremium ? (
+                            <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-lock text-amber-500 text-xs"></i>
+                                <span className="text-amber-600 dark:text-amber-400 text-xs font-semibold">Locked</span>
+                            </div>
+                        ) : item.isPremium && isPremium ? (
+                            <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-check text-green-500 text-xs"></i>
+                                <span className="text-green-600 dark:text-green-400 text-xs font-semibold">Unlocked</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-unlock text-teal-500 text-xs"></i>
+                                <span className="text-teal-600 dark:text-teal-400 text-xs font-semibold">Free Access</span>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-                        <div>
-                            <h4 className="font-semibold">Founder</h4>
-                            <p className="text-sm text-slate-500">Ganesh Dahal</p>
-                        </div>
-                        <div>
-                            <h4 className="font-semibold">Version</h4>
-                            <p className="text-sm text-slate-500">v1.0.0</p>
+                    {/* Action Button */}
+                    <div className="flex gap-3">
+                        {(!item.isPremium || isPremium) ? (
+                            <button
+                                onClick={() => onViewNote && onViewNote({
+                                    id: item.id,
+                                    title: item.title,
+                                    link: item.link,
+                                })}
+                                className="flex-1 bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn"
+                            >
+                                <i className="fas fa-eye text-sm group-hover/btn:animate-bounce"></i>
+                                Explore Resource
+                                <i className="fas fa-arrow-right text-xs transform group-hover/btn:translate-x-1 transition-transform duration-300"></i>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={onGoPremium}
+                                className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn"
+                            >
+                                <i className="fas fa-crown text-sm group-hover/btn:animate-bounce"></i>
+                                Unlock Premium
+                                <i className="fas fa-sparkles text-xs opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Animated Border */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-100 transition duration-500 -z-10">
+                    <div className="absolute inset-[2px] rounded-2xl bg-white dark:bg-slate-800"></div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/30 dark:from-slate-900 dark:via-blue-900/10 dark:to-purple-900/10">
+            {/* Animated Background Elements */}
+            <div className="fixed top-10 left-10 w-72 h-72 bg-teal-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+            <div className="fixed top-20 right-20 w-96 h-96 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-2000"></div>
+            <div className="fixed bottom-20 left-1/3 w-80 h-80 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-4000"></div>
+
+            <div className="relative z-10">
+                <div className="pt-12 pb-20 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Hero Header */}
+                        <div className="text-center mb-16">
+                            {/* Animated Title Container */}
+                            <div className="inline-block relative mb-8">
+                                <div className="absolute -inset-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur-2xl opacity-30 animate-pulse"></div>
+                                <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl px-8 py-6 shadow-2xl border border-white/20 dark:border-slate-700/50">
+                                    <h1 className="text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent font-display mb-4">
+                                        Digital Library
+                                    </h1>
+                                    <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                                        Your gateway to <span className="font-semibold text-blue-600 dark:text-blue-400">premium educational resources</span> and exclusive study materials
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Animated Search Bar */}
+                            <div className="max-w-2xl mx-auto relative">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl blur opacity-30 animate-pulse"></div>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i className="fas fa-search text-blue-500 text-lg"></i>
+                                    </div>
+                                    <input
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Discover amazing resources... ✨"
+                                        className="w-full pl-12 pr-4 py-4 bg-white/90 dark:bg-slate-800/90 border border-blue-200 dark:border-blue-800 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-2xl backdrop-blur-sm text-lg"
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                        <div className="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                            {filteredItems.length}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
-                        <div className="md:col-span-2">
-                            <h4 className="font-semibold">Contact & Socials</h4>
-                            <p className="text-sm text-slate-500">
-                                <a href={DATA.socials.facebook} target="_blank" rel="noopener noreferrer" className="underline hover:text-teal-500 transition">Facebook</a>
-                                {' · '}
-                                <a href={DATA.socials.youtube} target="_blank" rel="noopener noreferrer" className="underline hover:text-teal-500 transition">YouTube</a>
+                        {/* Animated Category Selector */}
+                        <div className="flex justify-center mb-12">
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-2 shadow-2xl border border-white/20 dark:border-slate-700/50">
+                                <div className="flex gap-2">
+                                    {categories.map((cat, index) => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setCategory(cat.id)}
+                                            className={`group relative px-6 py-3 rounded-xl font-bold transition-all duration-500 transform hover:scale-105 ${
+                                                category === cat.id 
+                                                ? `${cat.bgColor} text-white shadow-2xl`
+                                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50'
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <i className={`${cat.icon} ${category === cat.id ? 'text-white' : cat.color.replace('from-', 'text-').split('-')[0] + '-500'}`}></i>
+                                                <span>{cat.name}</span>
+                                            </div>
+                                            
+                                            {/* Active Indicator */}
+                                            {category === cat.id && (
+                                                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Resources Grid with Staggered Animation */}
+                        {filteredItems.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {filteredItems.map((item, index) => (
+                                    <div 
+                                        key={item.id}
+                                        className="animate-fadeInUp"
+                                        style={{ animationDelay: `${index * 150}ms` }}
+                                    >
+                                        <ResourceCard item={item} index={index} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            /* Spectacular Empty State */
+                            <div className="text-center py-24">
+                                <div className="relative inline-block mb-8">
+                                    <div className="w-40 h-40 bg-gradient-to-br from-blue-400 to-purple-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform rotate-6 animate-float">
+                                        <i className="fas fa-search text-white text-5xl"></i>
+                                    </div>
+                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full animate-ping"></div>
+                                    <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-cyan-400 rounded-full animate-ping animation-delay-1000"></div>
+                                </div>
+                                
+                                <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent mb-4">
+                                    No Resources Found
+                                </h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-md mx-auto">
+                                    Try different search terms or explore our other categories. Magic is everywhere!
+                                </p>
+                                
+                                <button 
+                                    onClick={() => { setSearch(''); setCategory('all'); }}
+                                    className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-3 mx-auto"
+                                >
+                                    <i className="fas fa-sparkles animate-pulse"></i>
+                                    Reset & Explore
+                                    <i className="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Premium CTA Section */}
+                        {!isPremium && libraryItems.some(item => item.isPremium) && (
+                            <div className="mt-20 relative">
+                                {/* Background Effects */}
+                                <div className="absolute -inset-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
+                                
+                                <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-3xl p-12 shadow-3xl overflow-hidden">
+                                    {/* Floating Elements */}
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 animate-float"></div>
+                                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-24 -translate-x-24 animate-float animation-delay-2000"></div>
+                                    
+                                    <div className="relative z-10 text-center text-white">
+                                        {/* Animated Icon */}
+                                        <div className="w-24 h-24 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-8 backdrop-blur-sm transform hover:scale-110 hover:rotate-12 transition-all duration-500 shadow-2xl">
+                                            <i className="fas fa-crown text-3xl text-white"></i>
+                                        </div>
+                                        
+                                        <h2 className="text-4xl font-bold font-display mb-6">
+                                            Unlock the <span className="bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">Magic</span> of Premium
+                                        </h2>
+                                        
+                                        <p className="text-white/90 text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
+                                            Access exclusive resources, advanced study materials, and premium content designed to skyrocket your academic success! 🚀
+                                        </p>
+                                        
+                                        <button 
+                                            onClick={onGoPremium}
+                                            className="bg-white text-amber-600 font-bold py-4 px-12 rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl text-lg flex items-center gap-3 mx-auto group"
+                                        >
+                                            <i className="fas fa-rocket group-hover:animate-bounce"></i>
+                                            Upgrade to Premium Experience
+                                            <i className="fas fa-sparkles text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(5deg); }
+                }
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-float {
+                    animation: float 6s ease-in-out infinite;
+                }
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                }
+                .animation-delay-2000 {
+                    animation-delay: 2s;
+                }
+                .animation-delay-4000 {
+                    animation-delay: 4s;
+                }
+                .animation-delay-300 {
+                    animation-delay: 300ms;
+                }
+                .animation-delay-1000 {
+                    animation-delay: 1000ms;
+                }
+                .line-clamp-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            `}</style>
+        </div>
+    );
+};
+    const OutBooks = ({ user, isPremium, onViewNote, onGoPremium }) => {
+    const [search, setSearch] = useState('');
+    const [category, setCategory] = useState('all');
+    const [hoveredCard, setHoveredCard] = useState(null);
+    
+    const books = DATA.ourBooks[user.grade] || [];
+    
+    const filteredBooks = books.filter(book =>
+        (book.title.toLowerCase().includes(search.toLowerCase()) ||
+        (book.description || '').toLowerCase().includes(search.toLowerCase())) &&
+        (category === 'all' || (category === 'premium' && book.isPremium) || (category === 'free' && !book.isPremium))
+    );
+
+    const categories = [
+        { 
+            id: 'all', 
+            name: 'All Books', 
+            icon: 'fas fa-books', 
+            color: 'from-purple-500 to-pink-500',
+            bgColor: 'bg-gradient-to-r from-purple-500 to-pink-500'
+        },
+        { 
+            id: 'free', 
+            name: 'Free Books', 
+            icon: 'fas fa-book-open', 
+            color: 'from-green-500 to-emerald-500',
+            bgColor: 'bg-gradient-to-r from-green-500 to-emerald-500'
+        },
+        { 
+            id: 'premium', 
+            name: 'Premium Books', 
+            icon: 'fas fa-crown', 
+            color: 'from-amber-500 to-orange-500',
+            bgColor: 'bg-gradient-to-r from-amber-500 to-orange-500'
+        }
+    ];
+
+    const BookCard = ({ book, index }) => (
+        <div 
+            className="group relative"
+            onMouseEnter={() => setHoveredCard(index)}
+            onMouseLeave={() => setHoveredCard(null)}
+        >
+            {/* Animated Background Glow */}
+            <div className={`absolute -inset-1 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 ${
+                hoveredCard === index ? 'animate-pulse' : ''
+            }`}></div>
+            
+            {/* Main Card */}
+            <div className="relative bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-2xl border border-white/20 dark:border-slate-700/50 hover:shadow-3xl transition-all duration-500 group-hover:-translate-y-3 backdrop-blur-sm">
+                {/* Floating Book Icon Container */}
+                <div className="absolute -top-4 left-6">
+                    <div className="relative">
+                        <div className={`w-12 h-12 ${book.isPremium ? 'bg-gradient-to-br from-amber-500 to-orange-500' : 'bg-gradient-to-br from-purple-500 to-pink-500'} rounded-2xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500`}>
+                            <i className={`${book.isPremium ? 'fas fa-crown' : 'fas fa-book'} text-white text-lg`}></i>
+                        </div>
+                        {/* Floating Pages Animation */}
+                        <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full opacity-0 group-hover:opacity-100 animate-ping"></div>
+                        <div className="absolute -bottom-1 -left-1 w-3 h-3 bg-pink-400 rounded-full opacity-0 group-hover:opacity-100 animate-ping animation-delay-300"></div>
+                    </div>
+                </div>
+
+                {/* Premium Book Badge */}
+                {book.isPremium && (
+                    <div className="absolute -top-2 -right-2">
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-1 rounded-full text-xs font-bold shadow-2xl flex items-center gap-1 transform group-hover:scale-110 transition-transform duration-300">
+                            <i className="fas fa-star text-xs"></i>
+                            PREMIUM
+                        </div>
+                    </div>
+                )}
+
+                {/* Content Area */}
+                <div className="pt-8">
+                    {/* Book Title with Gradient Text */}
+                    <h3 className="font-bold text-xl text-slate-800 dark:text-white mb-3 leading-tight group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-pink-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
+                        {book.title}
+                    </h3>
+                    
+                    {/* Book Description */}
+                    <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed mb-6 line-clamp-2">
+                        {book.description}
+                    </p>
+
+                    {/* Book Status */}
+                    <div className="flex items-center gap-2 mb-6">
+                        {book.isPremium && !isPremium ? (
+                            <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-lock text-amber-500 text-xs"></i>
+                                <span className="text-amber-600 dark:text-amber-400 text-xs font-semibold">Premium Book</span>
+                            </div>
+                        ) : book.isPremium && isPremium ? (
+                            <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-check-circle text-green-500 text-xs"></i>
+                                <span className="text-green-600 dark:text-green-400 text-xs font-semibold">Available</span>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2 bg-teal-500/10 border border-teal-500/20 px-3 py-1 rounded-full">
+                                <i className="fas fa-download text-teal-500 text-xs"></i>
+                                <span className="text-teal-600 dark:text-teal-400 text-xs font-semibold">Free Download</span>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Action Button */}
+                    <div className="flex gap-3">
+                        {(!book.isPremium || isPremium) ? (
+                            <button
+                                onClick={() => onViewNote && onViewNote({
+                                    id: book.id,
+                                    title: book.title,
+                                    link: book.link,
+                                })}
+                                className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn"
+                            >
+                                <i className="fas fa-book-open text-sm group-hover/btn:animate-bounce"></i>
+                                Read Book
+                                <i className="fas fa-arrow-right text-xs transform group-hover/btn:translate-x-1 transition-transform duration-300"></i>
+                            </button>
+                        ) : (
+                            <button
+                                onClick={onGoPremium}
+                                className="flex-1 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 group/btn"
+                            >
+                                <i className="fas fa-unlock text-sm group-hover/btn:animate-bounce"></i>
+                                Unlock Access
+                                <i className="fas fa-sparkles text-xs opacity-0 group-hover/btn:opacity-100 transition-opacity duration-300"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+
+                {/* Animated Book Spine Effect */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 opacity-0 group-hover:opacity-100 transition duration-500 -z-10">
+                    <div className="absolute inset-[2px] rounded-2xl bg-white dark:bg-slate-800"></div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50/30 to-pink-50/30 dark:from-slate-900 dark:via-purple-900/10 dark:to-pink-900/10">
+            {/* Animated Background Elements */}
+            <div className="fixed top-10 left-10 w-72 h-72 bg-purple-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+            <div className="fixed top-20 right-20 w-96 h-96 bg-pink-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-2000"></div>
+            <div className="fixed bottom-20 left-1/3 w-80 h-80 bg-red-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-4000"></div>
+
+            <div className="relative z-10">
+                <div className="pt-12 pb-20 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Hero Header */}
+                        <div className="text-center mb-16">
+                            {/* Animated Title Container */}
+                            <div className="inline-block relative mb-8">
+                                <div className="absolute -inset-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur-2xl opacity-30 animate-pulse"></div>
+                                <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl px-8 py-6 shadow-2xl border border-white/20 dark:border-slate-700/50">
+                                    <h1 className="text-6xl font-bold bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent font-display mb-4">
+                                        Out Books
+                                    </h1>
+                                    <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                                        Discover our <span className="font-semibold text-purple-600 dark:text-purple-400">curated collection</span> of textbooks and study guides for academic excellence
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Animated Search Bar */}
+                            <div className="max-w-2xl mx-auto relative">
+                                <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 animate-pulse"></div>
+                                <div className="relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i className="fas fa-search text-purple-500 text-lg"></i>
+                                    </div>
+                                    <input
+                                        value={search}
+                                        onChange={(e) => setSearch(e.target.value)}
+                                        placeholder="Find your perfect study companion... 📚"
+                                        className="w-full pl-12 pr-4 py-4 bg-white/90 dark:bg-slate-800/90 border border-purple-200 dark:border-purple-800 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-2xl backdrop-blur-sm text-lg"
+                                    />
+                                    <div className="absolute inset-y-0 right-0 pr-4 flex items-center">
+                                        <div className="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
+                                            {filteredBooks.length}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Animated Category Selector */}
+                        <div className="flex justify-center mb-12">
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-2 shadow-2xl border border-white/20 dark:border-slate-700/50">
+                                <div className="flex gap-2">
+                                    {categories.map((cat, index) => (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setCategory(cat.id)}
+                                            className={`group relative px-6 py-3 rounded-xl font-bold transition-all duration-500 transform hover:scale-105 ${
+                                                category === cat.id 
+                                                ? `${cat.bgColor} text-white shadow-2xl`
+                                                : 'text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-white/50 dark:hover:bg-slate-700/50'
+                                            }`}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <i className={`${cat.icon} ${category === cat.id ? 'text-white' : cat.color.replace('from-', 'text-').split('-')[0] + '-500'}`}></i>
+                                                <span>{cat.name}</span>
+                                            </div>
+                                            
+                                            {/* Active Page Indicator */}
+                                            {category === cat.id && (
+                                                <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Books Grid with Staggered Animation */}
+                        {filteredBooks.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                                {filteredBooks.map((book, index) => (
+                                    <div 
+                                        key={book.id}
+                                        className="animate-fadeInUp"
+                                        style={{ animationDelay: `${index * 150}ms` }}
+                                    >
+                                        <BookCard book={book} index={index} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            /* Spectacular Empty State */
+                            <div className="text-center py-24">
+                                <div className="relative inline-block mb-8">
+                                    <div className="w-40 h-40 bg-gradient-to-br from-purple-400 to-pink-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform -rotate-6 animate-float">
+                                        <i className="fas fa-book text-white text-5xl"></i>
+                                    </div>
+                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full animate-ping"></div>
+                                    <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-pink-400 rounded-full animate-ping animation-delay-1000"></div>
+                                </div>
+                                
+                                <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent mb-4">
+                                    No Books Found
+                                </h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-md mx-auto">
+                                    Try different search terms or explore our complete book collection. Knowledge awaits!
+                                </p>
+                                
+                                <button 
+                                    onClick={() => { setSearch(''); setCategory('all'); }}
+                                    className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-bold py-4 px-8 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl flex items-center gap-3 mx-auto"
+                                >
+                                    <i className="fas fa-bookmark animate-pulse"></i>
+                                    Explore All Books
+                                    <i className="fas fa-arrow-right transform group-hover:translate-x-1 transition-transform duration-300"></i>
+                                </button>
+                            </div>
+                        )}
+
+                        {/* Premium Books CTA Section */}
+                        {!isPremium && books.some(book => book.isPremium) && (
+                            <div className="mt-20 relative">
+                                {/* Background Effects */}
+                                <div className="absolute -inset-4 bg-gradient-to-r from-amber-400 to-orange-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
+                                
+                                <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 rounded-3xl p-12 shadow-3xl overflow-hidden">
+                                    {/* Floating Book Elements */}
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32 animate-float"></div>
+                                    <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full translate-y-24 -translate-x-24 animate-float animation-delay-2000"></div>
+                                    
+                                    <div className="relative z-10 text-center text-white">
+                                        {/* Animated Book Icon */}
+                                        <div className="w-24 h-24 bg-white/20 rounded-3xl flex items-center justify-center mx-auto mb-8 backdrop-blur-sm transform hover:scale-110 hover:rotate-12 transition-all duration-500 shadow-2xl">
+                                            <i className="fas fa-book-heart text-3xl text-white"></i>
+                                        </div>
+                                        
+                                        <h2 className="text-4xl font-bold font-display mb-6">
+                                            Unlock <span className="bg-gradient-to-r from-white to-amber-200 bg-clip-text text-transparent">Premium Books</span>
+                                        </h2>
+                                        
+                                        <p className="text-white/90 text-xl mb-8 max-w-2xl mx-auto leading-relaxed">
+                                            Access exclusive textbooks, expert study guides, and premium educational content that will transform your learning journey! 🌟
+                                        </p>
+                                        
+                                        <button 
+                                            onClick={onGoPremium}
+                                            className="bg-white text-amber-600 font-bold py-4 px-12 rounded-2xl hover:bg-slate-100 transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-3xl text-lg flex items-center gap-3 mx-auto group"
+                                        >
+                                            <i className="fas fa-graduation-cap group-hover:animate-bounce"></i>
+                                            Access Premium Books
+                                            <i className="fas fa-sparkles text-amber-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Library Features */}
+                        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+                            <div className="text-center group">
+                                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                                    <i className="fas fa-book-reader text-white text-xl"></i>
+                                </div>
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-2">Comprehensive</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm">
+                                    Complete coverage of all subjects and topics
+                                </p>
+                            </div>
+                            
+                            <div className="text-center group">
+                                <div className="w-16 h-16 bg-gradient-to-br from-pink-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                                    <i className="fas fa-feather-alt text-white text-xl"></i>
+                                </div>
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-2">Expertly Curated</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm">
+                                    Carefully selected by educational experts
+                                </p>
+                            </div>
+                            
+                            <div className="text-center group">
+                                <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                                    <i className="fas fa-clock text-white text-xl"></i>
+                                </div>
+                                <h3 className="font-bold text-slate-800 dark:text-white mb-2">Always Updated</h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm">
+                                    Latest editions and current syllabus
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(-5deg); }
+                }
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-float {
+                    animation: float 6s ease-in-out infinite;
+                }
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                }
+                .animation-delay-2000 {
+                    animation-delay: 2s;
+                }
+                .animation-delay-4000 {
+                    animation-delay: 4s;
+                }
+                .animation-delay-300 {
+                    animation-delay: 300ms;
+                }
+                .animation-delay-1000 {
+                    animation-delay: 1000ms;
+                }
+                .line-clamp-2 {
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
+                }
+            `}</style>
+        </div>
+    );
+};
+
+const AboutSection = ({ user }) => {
+    return (
+        <div className="min-h-screen bg-white dark:bg-slate-900">
+            {/* Header Section */}
+            <div className="relative bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-slate-800 dark:to-slate-900 py-20">
+                <div className="absolute inset-0 bg-white/50 dark:bg-slate-900/50"></div>
+                <div className="relative max-w-6xl mx-auto px-4 text-center">
+                    <div className="inline-flex items-center gap-4 bg-white dark:bg-slate-800 rounded-2xl px-6 py-3 shadow-lg border border-slate-200 dark:border-slate-700 mb-8">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+                            <i className="fas fa-university text-white text-lg"></i>
+                        </div>
+                        <span className="text-sm font-semibold text-slate-700 dark:text-slate-300">About Ganesh Dai Academy</span>
+                    </div>
+                    
+                    <h1 className="text-5xl font-bold text-slate-800 dark:text-white mb-6 font-display">
+                        Excellence in <span className="bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">Education</span>
+                    </h1>
+                    <p className="text-xl text-slate-600 dark:text-slate-400 max-w-3xl mx-auto leading-relaxed">
+                        Empowering Grade 11 & 12 students with comprehensive learning resources, 
+                        expert guidance, and innovative tools for academic success.
+                    </p>
+                </div>
+            </div>
+
+            {/* Mission & Vision */}
+            <div className="py-16 bg-white dark:bg-slate-900">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        {/* Mission */}
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center">
+                                    <i className="fas fa-bullseye text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white">Our Mission</h3>
+                                    <p className="text-blue-600 dark:text-blue-400 font-semibold">Purpose-driven education</p>
+                                </div>
+                            </div>
+                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg">
+                                To provide accessible, high-quality educational resources that empower students 
+                                to excel academically and develop the skills needed for future success. We believe 
+                                every student deserves the opportunity to achieve their full potential.
                             </p>
                         </div>
 
-                        <div className="md:col-span-2">
-                            <h4 className="font-semibold">Mission</h4>
-                            <p className="text-sm text-slate-500">Provide concise, exam-focused resources and practical tools to help students succeed in +2 NEB exams.</p>
+                        {/* Vision */}
+                        <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-slate-200 dark:border-slate-700">
+                            <div className="flex items-center gap-4 mb-6">
+                                <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-600 rounded-2xl flex items-center justify-center">
+                                    <i className="fas fa-eye text-white text-xl"></i>
+                                </div>
+                                <div>
+                                    <h3 className="text-2xl font-bold text-slate-800 dark:text-white">Our Vision</h3>
+                                    <p className="text-purple-600 dark:text-purple-400 font-semibold">Shaping future leaders</p>
+                                </div>
+                            </div>
+                            <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-lg">
+                                To be Nepal's leading educational platform, recognized for innovation, excellence, 
+                                and transformative impact on student learning outcomes. We envision a future where 
+                                quality education is accessible to all.
+                            </p>
                         </div>
                     </div>
-
-                    <div className="pt-2 border-t dark:border-slate-700">
-                        <button 
-                            onClick={() => alert('Thanks for checking the About page!')} 
-                            className="mt-3 gradient-button px-4 py-2 rounded-full text-white font-bold touch-target"
-                        >
-                            Say Hi
-                        </button>
-                    </div>
                 </div>
             </div>
-        );
-    };
 
-    const MyStudyList = ({ bookmarkedNotes, allNotes, onBookmark, onViewNote, isPremium, onGoPremium, setActiveSection }) => {
-        const [showHelpNoteModal, setShowHelpNoteModal] = useState(false);
-        const notes = useMemo(() => allNotes.filter(n => bookmarkedNotes.includes(n.id)), [bookmarkedNotes, allNotes]);
-        
-        return (
-            <div className="section animate-fadeIn">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 className="text-3xl font-bold font-display">My Study List</h2>
-                        <p className="text-slate-500 dark:text-slate-400">Your hand-picked collection of important notes.</p>
+            {/* Values */}
+            <div className="py-16 bg-slate-50 dark:bg-slate-800">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">Our Values</h2>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg">Principles that guide everything we do</p>
                     </div>
-                    <button 
-                        onClick={() => setShowHelpNoteModal(true)}
-                        className="gradient-button px-4 py-2 rounded-full text-white font-bold touch-target"
-                    >
-                        <i className="fas fa-plus mr-2"></i>Help Note
-                    </button>
-                </div>
-                
-                {notes.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        {notes.map(note => (
-                            <NoteCard 
-                                key={note.id} 
-                                note={note} 
-                                isBookmarked={true} 
-                                onBookmark={onBookmark} 
-                                onView={onViewNote} 
-                                isPremiumUser={isPremium} 
-                                onGoPremium={onGoPremium}
-                            />
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            {
+                                icon: 'fas fa-graduation-cap',
+                                title: 'Excellence',
+                                description: 'Commitment to highest quality standards in education',
+                                color: 'from-blue-500 to-cyan-500'
+                            },
+                            {
+                                icon: 'fas fa-heart',
+                                title: 'Student Focus',
+                                description: 'Putting student success at the center of everything',
+                                color: 'from-green-500 to-emerald-500'
+                            },
+                            {
+                                icon: 'fas fa-lightbulb',
+                                title: 'Innovation',
+                                description: 'Continuously improving and adapting to needs',
+                                color: 'from-amber-500 to-orange-500'
+                            },
+                            {
+                                icon: 'fas fa-handshake',
+                                title: 'Integrity',
+                                description: 'Honest, transparent, and ethical practices',
+                                color: 'from-purple-500 to-pink-500'
+                            }
+                        ].map((value, index) => (
+                            <div key={index} className="bg-white dark:bg-slate-700 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-600 text-center">
+                                <div className={`w-12 h-12 bg-gradient-to-br ${value.color} rounded-xl flex items-center justify-center mx-auto mb-4`}>
+                                    <i className={`${value.icon} text-white text-lg`}></i>
+                                </div>
+                                <h4 className="font-bold text-slate-800 dark:text-white mb-2">{value.title}</h4>
+                                <p className="text-slate-600 dark:text-slate-400 text-sm">{value.description}</p>
+                            </div>
                         ))}
                     </div>
-                ) : (
-                    <div className="text-center py-20 card">
-                        <i className="far fa-bookmark text-6xl text-slate-400"></i>
-                        <h3 className="mt-4 text-2xl font-bold">Your Study List is Empty</h3>
-                        <p className="mt-2 text-slate-500">Click the bookmark icon on any note to add it here.</p>
-                        <button 
-                            onClick={() => setActiveSection({name: 'explorer'})} 
-                            className="mt-6 gradient-button font-bold py-3 px-6 rounded-full touch-target"
-                        >
-                            Explore Notes
-                        </button>
+                </div>
+            </div>
+
+            {/* Founder Section */}
+            <div className="py-16 bg-white dark:bg-slate-900">
+                <div className="max-w-4xl mx-auto px-4">
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-700 rounded-2xl p-8 shadow-lg border border-slate-200 dark:border-slate-600">
+                        <div className="flex flex-col md:flex-row items-center gap-8">
+                            <div className="flex-shrink-0">
+                                <img 
+                                    src={DATA.logoUrl} 
+                                    alt="Ganesh Dahal" 
+                                    className="w-32 h-32 rounded-2xl object-cover border-4 border-white dark:border-slate-600 shadow-lg"
+                                />
+                            </div>
+                            <div className="flex-1 text-center md:text-left">
+                                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Ganesh Dahal</h3>
+                                <p className="text-blue-600 dark:text-blue-400 font-semibold mb-4">Founder & Educator</p>
+                                <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                                    "Our vision for Ganesh Dai Academy stems from a deep belief in the transformative 
+                                    power of education. We're committed to providing students with the resources and 
+                                    guidance they need to not just succeed academically, but to develop into confident, 
+                                    capable individuals ready to make their mark on the world."
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Features */}
+            <div className="py-16 bg-slate-50 dark:bg-slate-800">
+                <div className="max-w-6xl mx-auto px-4">
+                    <div className="text-center mb-12">
+                        <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-4">What Sets Us Apart</h2>
+                        <p className="text-slate-600 dark:text-slate-400 text-lg">Comprehensive solutions for modern education</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {[
+                            {
+                                icon: 'fas fa-book-open',
+                                title: 'Comprehensive Resources',
+                                items: ['Subject Notes', 'Model Questions', 'Reference Materials']
+                            },
+                            {
+                                icon: 'fas fa-tools',
+                                title: 'Learning Tools',
+                                items: ['GPA Calculator', 'Study Planner', 'Progress Tracking']
+                            },
+                            {
+                                icon: 'fas fa-chalkboard-teacher',
+                                title: 'Expert Support',
+                                items: ['Quality Content', 'Regular Updates', 'Student-focused']
+                            }
+                        ].map((feature, index) => (
+                            <div key={index} className="bg-white dark:bg-slate-700 rounded-xl p-6 shadow-lg border border-slate-200 dark:border-slate-600">
+                                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center mb-4">
+                                    <i className={`${feature.icon} text-white text-lg`}></i>
+                                </div>
+                                <h4 className="font-bold text-slate-800 dark:text-white mb-4">{feature.title}</h4>
+                                <ul className="space-y-2">
+                                    {feature.items.map((item, itemIndex) => (
+                                        <li key={itemIndex} className="flex items-center gap-3 text-slate-600 dark:text-slate-400">
+                                            <i className="fas fa-check text-green-500 text-sm"></i>
+                                            <span>{item}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
+            {/* Contact & Social */}
+            <div className="py-16 bg-white dark:bg-slate-900">
+                <div className="max-w-4xl mx-auto px-4">
+                    <div className="bg-slate-50 dark:bg-slate-800 rounded-2xl p-8 shadow-lg border border-slate-200 dark:border-slate-600">
+                        <div className="text-center mb-8">
+                            <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-2">Get In Touch</h3>
+                            <p className="text-slate-600 dark:text-slate-400">Connect with us for support and updates</p>
+                        </div>
+
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a 
+                                href={DATA.socials.youtube}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 bg-red-500 hover:bg-red-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
+                            >
+                                <i className="fab fa-youtube text-lg"></i>
+                                YouTube Channel
+                            </a>
+                            <a 
+                                href={DATA.socials.facebook}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold transition-colors"
+                            >
+                                <i className="fab fa-facebook text-lg"></i>
+                                Facebook Page
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Footer Note */}
+            <div className="py-8 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700">
+                <div className="max-w-6xl mx-auto px-4 text-center">
+                    <p className="text-slate-600 dark:text-slate-400">
+                        © 2024 Ganesh Dai Academy. Committed to educational excellence.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+ const MyStudyList = ({ bookmarkedNotes, allNotes, onBookmark, onViewNote, isPremium, onGoPremium, setActiveSection }) => {
+    const [showHelpNoteModal, setShowHelpNoteModal] = useState(false);
+    const [hoveredNote, setHoveredNote] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    
+    const notes = useMemo(() => 
+        allNotes.filter(n => bookmarkedNotes.includes(n.id))
+                .filter(note => note.title.toLowerCase().includes(searchTerm.toLowerCase())),
+        [bookmarkedNotes, allNotes, searchTerm]
+    );
+
+    const subjects = [...new Set(notes.map(note => note.subject))];
+    const [selectedSubject, setSelectedSubject] = useState('all');
+
+    const filteredNotes = selectedSubject === 'all' 
+        ? notes 
+        : notes.filter(note => note.subject === selectedSubject);
+
+    const StudyNoteCard = ({ note, index }) => (
+        <div 
+            className="group relative"
+            onMouseEnter={() => setHoveredNote(index)}
+            onMouseLeave={() => setHoveredNote(null)}
+        >
+            {/* Animated Glow Effect */}
+            <div className={`absolute -inset-1 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl blur opacity-0 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 ${
+                hoveredNote === index ? 'animate-pulse' : ''
+            }`}></div>
+            
+            {/* Main Card */}
+            <div className="relative bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-xl border border-slate-200 dark:border-slate-700 hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-2 backdrop-blur-sm">
+                {/* Floating Bookmark Icon */}
+                <div className="absolute -top-3 -left-3">
+                    <div className="w-10 h-10 bg-gradient-to-br from-amber-500 to-orange-500 rounded-xl flex items-center justify-center shadow-2xl transform group-hover:scale-110 group-hover:rotate-12 transition-all duration-500">
+                        <i className="fas fa-bookmark text-white text-sm"></i>
+                    </div>
+                </div>
+
+                {/* Premium Badge */}
+                {note.isPremium && (
+                    <div className="absolute -top-2 -right-2">
+                        <div className="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
+                            <i className="fas fa-crown text-xs"></i>
+                            PREMIUM
+                        </div>
                     </div>
                 )}
-                
-                {showHelpNoteModal && <HelpNoteModal onClose={() => setShowHelpNoteModal(false)} />}
-            </div>
-        );
-    };
 
+                {/* Content */}
+                <div className="pt-2">
+                    {/* Subject Tag */}
+                    <div className="flex items-center gap-2 mb-3">
+                        <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${
+                            DATA.subjectData[note.subject]?.color || 'from-slate-500 to-slate-700'
+                        } flex items-center justify-center`}>
+                            <i className="fas fa-book text-white text-xs"></i>
+                        </div>
+                        <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-full">
+                            {note.subject}
+                        </span>
+                    </div>
+
+                    {/* Title */}
+                    <h3 className="font-bold text-lg text-slate-800 dark:text-white mb-3 leading-tight group-hover:bg-gradient-to-r group-hover:from-teal-600 group-hover:to-cyan-600 group-hover:bg-clip-text group-hover:text-transparent transition-all duration-500">
+                        {note.title}
+                    </h3>
+
+                    {/* Meta Info */}
+                    <div className="flex items-center justify-between text-sm text-slate-500 dark:text-slate-400 mb-4">
+                        <span>Grade {note.grade}</span>
+                        <span className="flex items-center gap-1">
+                            <i className="fas fa-clock text-xs"></i>
+                            Recently saved
+                        </span>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => (note.isPremium && !isPremium) ? onGoPremium() : onViewNote(note)}
+                            className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center justify-center gap-2 ${
+                                note.isPremium && !isPremium
+                                    ? 'bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white'
+                                    : 'bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white'
+                            }`}
+                        >
+                            {note.isPremium && !isPremium ? (
+                                <>
+                                    <i className="fas fa-lock text-sm"></i>
+                                    Unlock
+                                </>
+                            ) : (
+                                <>
+                                    <i className="fas fa-eye text-sm"></i>
+                                    Study Now
+                                </>
+                            )}
+                        </button>
+                        
+                        <button
+                            onClick={(e) => { e.stopPropagation(); onBookmark(note.id); }}
+                            className="w-10 h-10 bg-red-500 hover:bg-red-600 text-white rounded-lg flex items-center justify-center transition-all duration-300 transform hover:scale-110 shadow-lg hover:shadow-xl"
+                        >
+                            <i className="fas fa-trash text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+
+                {/* Hover Border Animation */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-teal-500 to-cyan-500 opacity-0 group-hover:opacity-100 transition duration-500 -z-10">
+                    <div className="absolute inset-[2px] rounded-2xl bg-white dark:bg-slate-800"></div>
+                </div>
+            </div>
+        </div>
+    );
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-teal-50/20 to-cyan-50/20 dark:from-slate-900 dark:via-teal-900/10 dark:to-cyan-900/10">
+            {/* Animated Background */}
+            <div className="fixed top-0 left-0 w-96 h-96 bg-teal-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float"></div>
+            <div className="fixed top-20 right-20 w-96 h-96 bg-cyan-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-2000"></div>
+            <div className="fixed bottom-20 left-1/3 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-float animation-delay-4000"></div>
+
+            <div className="relative z-10">
+                <div className="pt-8 pb-12 px-4">
+                    <div className="max-w-7xl mx-auto">
+                        {/* Header Section */}
+                        <div className="text-center mb-8">
+                            <div className="inline-block relative mb-6">
+                                <div className="absolute -inset-4 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl blur-2xl opacity-30 animate-pulse"></div>
+                                <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl px-8 py-6 shadow-2xl border border-white/20 dark:border-slate-700/50">
+                                    <h1 className="text-5xl font-bold bg-gradient-to-r from-teal-600 to-cyan-600 bg-clip-text text-transparent font-display mb-4">
+                                        My Study List
+                                    </h1>
+                                    <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                                        Your personalized collection of <span className="font-semibold text-teal-600 dark:text-teal-400">saved resources</span> for focused learning
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Stats & Actions */}
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-slate-700/50 text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                    <i className="fas fa-bookmark text-white text-xl"></i>
+                                </div>
+                                <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2">{notes.length}</div>
+                                <div className="text-slate-600 dark:text-slate-400">Saved Notes</div>
+                            </div>
+                            
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-slate-700/50 text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                    <i className="fas fa-books text-white text-xl"></i>
+                                </div>
+                                <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2">{subjects.length}</div>
+                                <div className="text-slate-600 dark:text-slate-400">Subjects</div>
+                            </div>
+                            
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-slate-700/50 text-center">
+                                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                                    <i className="fas fa-crown text-white text-xl"></i>
+                                </div>
+                                <div className="text-3xl font-bold text-slate-800 dark:text-white mb-2">
+                                    {notes.filter(n => n.isPremium).length}
+                                </div>
+                                <div className="text-slate-600 dark:text-slate-400">Premium</div>
+                            </div>
+                            
+                            <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-lg border border-white/20 dark:border-slate-700/50 text-center">
+                                <button
+                                    onClick={() => setShowHelpNoteModal(true)}
+                                    className="w-full h-full flex flex-col items-center justify-center group"
+                                >
+                                    <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mb-4 shadow-lg transform group-hover:scale-110 transition-transform duration-300">
+                                        <i className="fas fa-plus text-white text-xl"></i>
+                                    </div>
+                                    <div className="text-lg font-bold text-slate-800 dark:text-white mb-2">Add Note</div>
+                                    <div className="text-slate-600 dark:text-slate-400 text-sm">Request Help</div>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Search & Filter */}
+                        <div className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl p-6 shadow-2xl border border-white/20 dark:border-slate-700/50 mb-8">
+                            <div className="flex flex-col lg:flex-row gap-4">
+                                {/* Search */}
+                                <div className="flex-1 relative">
+                                    <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i className="fas fa-search text-teal-500 text-lg"></i>
+                                    </div>
+                                    <input
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        placeholder="Search your saved notes..."
+                                        className="w-full pl-12 pr-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-300 text-slate-800 dark:text-white placeholder-slate-500 dark:placeholder-slate-400 shadow-lg"
+                                    />
+                                </div>
+
+                                {/* Subject Filter */}
+                                <div className="flex gap-2 overflow-x-auto pb-2">
+                                    <button
+                                        onClick={() => setSelectedSubject('all')}
+                                        className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
+                                            selectedSubject === 'all'
+                                                ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg'
+                                                : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 shadow-md'
+                                        }`}
+                                    >
+                                        All Subjects
+                                    </button>
+                                    {subjects.map(subject => (
+                                        <button
+                                            key={subject}
+                                            onClick={() => setSelectedSubject(subject)}
+                                            className={`px-4 py-2 rounded-xl font-semibold transition-all duration-300 whitespace-nowrap ${
+                                                selectedSubject === subject
+                                                    ? 'bg-gradient-to-r from-teal-500 to-cyan-500 text-white shadow-lg'
+                                                    : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600 shadow-md'
+                                            }`}
+                                        >
+                                            {subject}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Notes Grid */}
+                        {filteredNotes.length > 0 ? (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {filteredNotes.map((note, index) => (
+                                    <div 
+                                        key={note.id}
+                                        className="animate-fadeInUp"
+                                        style={{ animationDelay: `${index * 100}ms` }}
+                                    >
+                                        <StudyNoteCard note={note} index={index} />
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            /* Empty State */
+                            <div className="text-center py-20">
+                                <div className="relative inline-block mb-8">
+                                    <div className="w-40 h-40 bg-gradient-to-br from-teal-400 to-cyan-500 rounded-3xl flex items-center justify-center mx-auto shadow-2xl transform rotate-6 animate-float">
+                                        <i className="fas fa-bookmark text-white text-5xl"></i>
+                                    </div>
+                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full animate-ping"></div>
+                                    <div className="absolute -bottom-2 -left-2 w-6 h-6 bg-cyan-400 rounded-full animate-ping animation-delay-1000"></div>
+                                </div>
+                                
+                                <h3 className="text-3xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 dark:from-white dark:to-slate-300 bg-clip-text text-transparent mb-4">
+                                    {notes.length === 0 ? 'Your Study List is Empty' : 'No Notes Found'}
+                                </h3>
+                                <p className="text-slate-600 dark:text-slate-400 text-lg mb-8 max-w-md mx-auto">
+                                    {notes.length === 0 
+                                        ? 'Start building your personalized study collection by bookmarking notes that matter to you.'
+                                        : 'Try adjusting your search terms or filters to find what you\'re looking for.'
+                                    }
+                                </p>
+                                
+                                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                                    <button 
+                                        onClick={() => setActiveSection({name: 'explorer'})}
+                                        className="bg-gradient-to-r from-teal-500 to-cyan-500 hover:from-teal-600 hover:to-cyan-600 text-white font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-3"
+                                    >
+                                        <i className="fas fa-compass"></i>
+                                        Explore Notes
+                                    </button>
+                                    <button 
+                                        onClick={() => { setSearchTerm(''); setSelectedSubject('all'); }}
+                                        className="border-2 border-teal-500 text-teal-500 hover:bg-teal-500/10 font-bold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105"
+                                    >
+                                        Clear Filters
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Progress Section */}
+                        {filteredNotes.length > 0 && (
+                            <div className="mt-12 bg-gradient-to-r from-teal-500 to-cyan-500 rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+                                <div className="absolute inset-0 bg-black/10"></div>
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -translate-y-32 translate-x-32"></div>
+                                
+                                <div className="relative z-10 text-white text-center">
+                                    <h3 className="text-2xl font-bold mb-4">Study Progress</h3>
+                                    <div className="flex items-center justify-center gap-8">
+                                        <div className="text-center">
+                                            <div className="text-3xl font-bold mb-1">{filteredNotes.length}</div>
+                                            <div className="text-white/80 text-sm">Saved Notes</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-3xl font-bold mb-1">
+                                                {Math.round((filteredNotes.filter(n => !n.isPremium || isPremium).length / filteredNotes.length) * 100)}%
+                                            </div>
+                                            <div className="text-white/80 text-sm">Accessible</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-3xl font-bold mb-1">{subjects.length}</div>
+                                            <div className="text-white/80 text-sm">Subjects</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Help Note Modal */}
+            {showHelpNoteModal && <HelpNoteModal onClose={() => setShowHelpNoteModal(false)} />}
+
+            <style jsx>{`
+                @keyframes float {
+                    0%, 100% { transform: translateY(0px) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(5deg); }
+                }
+                @keyframes fadeInUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(30px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+                .animate-float {
+                    animation: float 6s ease-in-out infinite;
+                }
+                .animate-fadeInUp {
+                    animation: fadeInUp 0.6s ease-out forwards;
+                }
+                .animation-delay-2000 {
+                    animation-delay: 2s;
+                }
+                .animation-delay-4000 {
+                    animation-delay: 4s;
+                }
+                .animation-delay-1000 {
+                    animation-delay: 1000ms;
+                }
+            `}</style>
+        </div>
+    );
+};
     const GpaCalculator = ({ user, onDownload }) => {
         const streamInfo = DATA.streams.find(s => s.id === user.stream);
         const userSubjects = [...(streamInfo?.compulsory || []), ...(user.optionals || [])];
